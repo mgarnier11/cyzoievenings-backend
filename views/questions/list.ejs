@@ -14,12 +14,12 @@
     </select>
     <script>
         $("#selectTypeSort").change(() => {
-            var rows = $("#list > tr");
-
-            console.log(rows);
-            $(rows).each(row => {
-                console.log($(row));
-            })
+            $.each($(".listItem"), (index, row) => {
+                var item = $(row).find(".type")
+                if (item.text() == $("#selectTypeSort").find(":selected").text()) $(row).removeClass("hidden");
+                else if ($("#selectTypeSort").find(":selected").text() != "None") $(row).addClass("hidden");
+                else $(row).removeClass("hidden");
+            });
         })
     </script>
     <hr>
@@ -32,11 +32,11 @@
                 <th class="text-center">Actions</th>
             </tr>
         </thead>
-        <tbody id="list">
+        <tbody>
             <% questions.forEach((question) => {%>
-                <tr>
+                <tr class="listItem">
                     <td><%=question.text %></td>
-                    <td class="questionCell type"><span><%=types[question.type - 1].value %></span></td>
+                    <td class="questionCell type text-center"><span><%=types[question.type - 1].value %></span></td>
                     <td class="questionCell difficulty">
                         <% for(var i = 0; i < 5; i++) { %>
                             <% if(i < question.difficulty) { %>
