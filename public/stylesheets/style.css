@@ -6,3 +6,14 @@ body {
 a {
   color: #00B7FF;
 }
+
+.questionCell {
+  position: relative;
+  width: 100px;
+}
+
+.questionCell span {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}

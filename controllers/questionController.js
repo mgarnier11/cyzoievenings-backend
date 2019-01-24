@@ -11,13 +11,18 @@ const types = [
 ]
 
 /* GET create new question. */
+router.get('/', function (req, res, next) {
+    res.redirect('/questions/list');
+});
+
+/* GET create new question. */
 router.get('/create', function (req, res, next) {
     res.render('questions/create', { types: types });
 });
 
 /* POST create new question. */
-router.post('/create', function (req, res, next) {
-    questionService.createQuestion({
+router.post('/create', async function (req, res, next) {
+    await questionService.createQuestion({
         text: req.body.questionText,
         type: parseInt(req.body.questionType),
         difficulty: parseInt(req.body.questionDifficulty)
@@ -45,7 +50,7 @@ router.post('/update/:id', async function (req, res, next) {
         type: req.body.questionType,
         difficulty: req.body.questionDifficulty
     });
-    res.render('questions/update', { question: await questionService.findQuestionById(questionId) });
+    res.redirect('/questions/list');
 });
 
 /* GET delete question. */

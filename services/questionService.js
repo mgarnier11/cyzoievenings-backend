@@ -7,6 +7,8 @@ function processQuestion(question) {
     var playerFPos = searchMany(question.text, '{PlayerM}');
 
     question.nbPlayers = playerPos.length + playerMPos.length + playerFPos.length;
+    if (!question.nbPicked) question.nbPicked = 0;
+    if (!question.nbDone) question.nbDone = 0;
 
     return question;
 }

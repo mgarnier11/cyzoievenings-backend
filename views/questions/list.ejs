@@ -5,26 +5,25 @@
 
 <body>
     <h2>Questions</h2>
-    <table class="table">
+    <table class="table table-hover table-striped table-bordered">
         <thead>
             <tr>
-                <th>Text</th>
-                <th>Type</th>
-                <th>Difficulty</th>
-                <th>Nb Players</th>
-                <th></th>
-                <th></th>
+                <th class="">Text</th>
+                <th class="">Type</th>
+                <th class="">Difficulty</th>
+                <th class="">Nb Players</th>
+
             </tr>
         </thead>
         <tbody>
             <% questions.forEach((question) => {%>
                 <tr>
                     <td><%=question.text %></td>
-                    <td><%=types[question.type - 1].value %></td>
-                    <td><%=question.difficulty%></td>
-                    <td><%=question.nbPlayers%></td>
-                    <td><a href="/questions/update/<%=question.uuid%>"><span class="glyphicon glyphicon-edit"></span></a></td>
-                    <td><a href="/questions/delete/<%=question.uuid%>"><span class="glyphicon glyphicon-remove"></span></a></td>
+                    <td class="questionCell"><span><%=types[question.type - 1].value %></span></td>
+                    <td class="questionCell"><span><%=question.difficulty%></span></td>
+                    <td class="questionCell"><span><%=question.nbPlayers%></span></td>
+                    <td class="questionCell text-center"><a href="/questions/update/<%=question.uuid%>"><span class="glyphicon glyphicon-edit"></span></a></td>
+                    <td class="questionCell text-center"><a href="/questions/delete/<%=question.uuid%>"><span class="glyphicon glyphicon-remove"></span></a></td>
                 </tr>
             <%})%>
         </tbody>
