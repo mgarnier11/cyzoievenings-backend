@@ -6,17 +6,32 @@
 <body>
     <a class="btn btn-success" href="/questions/create">Create new Question</a>
     <hr>
-    <select class="form-control" id="selectTypeSort" name="questionType">
+    <select class="form-control sorter" id="selectTypeSort">
         <option value="0">None</option>
         <% types.forEach(function(type){%>
             <option value="<%=type.id%>"><%=type.value%></option>
         <% })%>
     </select>
+    <!--
+    <select class="form-control sorter" id="selectHiddens">
+        <option value="0">Hide hidden</option>
+        <option value="1">Show hidden</option>
+    </select>
+    -->
     <script>
         $("#selectTypeSort").change(() => {
             $.each($(".listItem"), (index, row) => {
                 var item = $(row).find(".type")
                 if (item.text() == $("#selectTypeSort").find(":selected").text()) $(row).removeClass("hidden");
+                else if ($("#selectTypeSort").find(":selected").text() != "None") $(row).addClass("hidden");
+                else $(row).removeClass("hidden");
+            });
+        })
+
+        $("#selectHiddens").change(() => {
+            $.each($(".listItem"), (index, row) => {
+                var item = $(row).find(".actions")
+                if ($("#selectTypeSort").find(":selected").text() == "Hide hidden") $(row).removeClass("hidden");
                 else if ($("#selectTypeSort").find(":selected").text() != "None") $(row).addClass("hidden");
                 else $(row).removeClass("hidden");
             });
@@ -34,7 +49,7 @@
         </thead>
         <tbody>
             <% questions.forEach((question) => {%>
-                <tr class="listItem">
+                <tr class="listItem <%= question.hidden ? 'hidden' : '' %>">
                     <td><%=question.text %></td>
                     <td class="questionCell type text-center"><span><%=types[question.type - 1].value %></span></td>
                     <td class="questionCell difficulty">
@@ -45,11 +60,12 @@
                                 <span class="glyphicon glyphicon-star-empty"></span>
                             <% } %>
                             
-                        <%}%>
+                        <% } %>
                     </td>
                     <td class="questionCell actions">                
                         <a href="/questions/update/<%=question.uuid%>" class="btn btn-primary">Update</a>
                         <a href="/questions/delete/<%=question.uuid%>" class="btn btn-danger">Delete</a>
+                        <!--<a href="/questions/switch/<%=question.uuid%>" class="btn btn-success"><%= question.hidden ? 'Show' : 'Hide' %></a>-->
                     </td>
                 </tr>
             <%})%>

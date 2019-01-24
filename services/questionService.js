@@ -9,6 +9,7 @@ function processQuestion(question) {
     question.nbPlayers = playerPos.length + playerMPos.length + playerFPos.length;
     if (!question.nbPicked) question.nbPicked = 0;
     if (!question.nbDone) question.nbDone = 0;
+    if (question.hidden == undefined) question.hidden = false;
 
     return question;
 }

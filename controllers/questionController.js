@@ -58,7 +58,22 @@ router.get('/delete/:id/yes', async function(req, res, next) {
     await questionService.deleteQuestion(await questionService.findQuestionById(questionId));
 
     res.redirect('/questions/list');
-})
+});
 
+router.get('/switch/:questionId', async (req, res) => {
+    var questionId = req.params.questionId;
+    try {
+        var question = await questionService.findQuestionById(questionId);
+
+        question.hidden = !question.hidden;
+
+        await questionService.upsertQuestion(question);
+
+        res.redirect('/questions/list');
+    } catch (error) {
+        console.log(error);
+        res.send('error');
+    }
+});
 
 module.exports = router;
