@@ -4,26 +4,36 @@
 <% include ../partials/header %>
 
 <body>
-    <h2>Questions</h2>
+    <a class="btn btn-success" href="/questions/create">Create new Question</a>
+    <hr>
     <table class="table table-hover table-striped table-bordered">
         <thead>
             <tr>
                 <th class="">Text</th>
-                <th class="">Type</th>
-                <th class="">Difficulty</th>
-                <th class="">Nb Players</th>
-
+                <th class="text-center">Type</th>
+                <th class="text-center">Difficulty</th>
+                <th class="text-center">Actions</th>
             </tr>
         </thead>
         <tbody>
             <% questions.forEach((question) => {%>
                 <tr>
                     <td><%=question.text %></td>
-                    <td class="questionCell"><span><%=types[question.type - 1].value %></span></td>
-                    <td class="questionCell"><span><%=question.difficulty%></span></td>
-                    <td class="questionCell"><span><%=question.nbPlayers%></span></td>
-                    <td class="questionCell"><a href="/questions/update/<%=question.uuid%>"><span class="glyphicon glyphicon-edit"></span></a></td>
-                    <td class="questionCell"><a href="/questions/delete/<%=question.uuid%>"><span class="glyphicon glyphicon-remove"></span></a></td>
+                    <td class="questionCell type"><span><%=types[question.type - 1].value %></span></td>
+                    <td class="questionCell difficulty">
+                        <% for(var i = 0; i < 5; i++) { %>
+                            <% if(i < question.difficulty) { %>
+                                <span class="glyphicon glyphicon-star"></span>
+                            <% } else { %>
+                                <span class="glyphicon glyphicon-star-empty"></span>
+                            <% } %>
+                            
+                        <%}%>
+                    </td>
+                    <td class="questionCell actions">                
+                        <a href="/questions/update/<%=question.uuid%>" class="btn btn-primary">Update</a>
+                        <a href="/questions/delete/<%=question.uuid%>" class="btn btn-danger">Delete</a>
+                    </td>
                 </tr>
             <%})%>
         </tbody>

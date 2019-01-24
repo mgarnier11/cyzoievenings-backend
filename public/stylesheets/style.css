@@ -7,13 +7,14 @@ a {
   color: #00B7FF;
 }
 
-.questionCell {
-  position: relative;
+.type {
   width: 100px;
 }
 
-.questionCell span {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+.difficulty {
+  width: 103px;
+}
+
+.actions {
+  width: 159px;
 }

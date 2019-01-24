@@ -49,9 +49,16 @@ router.post('/update/:id', async function (req, res, next) {
 /* GET delete question. */
 router.get('/delete/:id', async function (req, res, next) {
     var questionId = req.params.id;
-    await questionService.deleteQuestion(await questionService.findQuestionById(questionId));
-    res.redirect('/questions/list');
+    res.render('questions/delete', {types: await questionService.getTypes(),question: await questionService.findQuestionById(questionId)});
 });
+
+router.get('/delete/:id/yes', async function(req, res, next) {
+    var questionId = req.params.id;
+    
+    await questionService.deleteQuestion(await questionService.findQuestionById(questionId));
+
+    res.redirect('/questions/list');
+})
 
 
 module.exports = router;
