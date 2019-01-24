@@ -34,6 +34,7 @@ const types = [
     { id: 5, value: "Minijeu" },
     { id: 6, value: "Action" },
     { id: 7, value: "Vérité de groupe" },
+    { id: 8, value: "Tu préfères" },
 
 
 ]

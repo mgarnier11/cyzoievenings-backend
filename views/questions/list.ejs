@@ -6,6 +6,23 @@
 <body>
     <a class="btn btn-success" href="/questions/create">Create new Question</a>
     <hr>
+    <select class="form-control" id="selectTypeSort" name="questionType">
+        <option value="0">None</option>
+        <% types.forEach(function(type){%>
+            <option value="<%=type.id%>"><%=type.value%></option>
+        <% })%>
+    </select>
+    <script>
+        $("#selectTypeSort").change(() => {
+            var rows = $("#list > tr");
+
+            console.log(rows);
+            $(rows).each(row => {
+                console.log($(row));
+            })
+        })
+    </script>
+    <hr>
     <table class="table table-hover table-striped table-bordered">
         <thead>
             <tr>
@@ -15,7 +32,7 @@
                 <th class="text-center">Actions</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="list">
             <% questions.forEach((question) => {%>
                 <tr>
                     <td><%=question.text %></td>
