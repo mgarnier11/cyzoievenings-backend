@@ -13,7 +13,7 @@
                 <label for="selectType">Question Type</label>
                 <select class="form-control" id="selectType" name="questionType">
                     <% types.forEach(function(type){%>
-                        <option value="<%=type.id%>"><%=type.value%></option>
+                        <option value="<%=type.id%>" <% if (question.difficulty == type.id) {%> selected <% } %></option>><%=type.value%></option>
                     <% })%>
                 </select>
         </div>
