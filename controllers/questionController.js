@@ -1,0 +1,59 @@
+var express = require('express');
+var router = express.Router();
+var questionService = require('../services/questionService');
+
+const types = [
+    { id: 1, value: "Truth/Dare" },
+    { id: 2, value: "Theme" },
+    { id: 3, value: "Action" },
+    { id: 4, value: "Have you ever done" },
+    { id: 5, value: "Minigame" }
+]
+
+/* GET create new question. */
+router.get('/create', function (req, res, next) {
+    res.render('questions/create', { types: types });
+});
+
+/* POST create new question. */
+router.post('/create', function (req, res, next) {
+    questionService.createQuestion({
+        text: req.body.questionText,
+        type: parseInt(req.body.questionType),
+        difficulty: parseInt(req.body.questionDifficulty)
+    });
+    res.redirect('/questions/list');
+});
+
+/* GET list questions. */
+router.get('/list', async function (req, res, next) {
+    res.render('questions/list', { types: types, questions: await questionService.findAllQuestions() });
+});
+
+/* GET update question. */
+router.get('/update/:id', async function (req, res, next) {
+    var questionId = req.params.id;
+    res.render('questions/update', { question: await questionService.findQuestionById(questionId) });
+});
+
+/* POST update question. */
+router.post('/update/:id', async function (req, res, next) {
+    var questionId = req.params.id;
+    await questionService.upsertQuestion({
+        uuid: questionId,
+        text: req.body.questionText,
+        type: req.body.questionType,
+        difficulty: req.body.questionDifficulty
+    });
+    res.render('questions/update', { question: await questionService.findQuestionById(questionId) });
+});
+
+/* GET delete question. */
+router.get('/delete/:id', async function (req, res, next) {
+    var questionId = req.params.id;
+    await questionService.deleteQuestion(await questionService.findQuestionById(questionId));
+    res.redirect('/questions/list');
+});
+
+
+module.exports = router;

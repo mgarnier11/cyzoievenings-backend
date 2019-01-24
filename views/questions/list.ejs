@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<% include ../partials/head %>
+<% include ../partials/header %>
+
+<body>
+    <h2>Questions</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Text</th>
+                <th>Type</th>
+                <th>Difficulty</th>
+                <th>Nb Players</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <% questions.forEach((question) => {%>
+                <tr>
+                    <td><%=question.text %></td>
+                    <td><%=types[question.type - 1].value %></td>
+                    <td><%=question.difficulty%></td>
+                    <td><%=question.nbPlayers%></td>
+                    <td><a href="/questions/update/<%=question.uuid%>"><span class="glyphicon glyphicon-edit"></span></a></td>
+                    <td><a href="/questions/delete/<%=question.uuid%>"><span class="glyphicon glyphicon-remove"></span></a></td>
+                </tr>
+            <%})%>
+        </tbody>
+    </table>
+
+</body>
+<% include ../partials/footer %>
+
+</html>

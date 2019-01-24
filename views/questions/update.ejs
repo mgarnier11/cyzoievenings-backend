@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<% include ../partials/head %>
+<% include ../partials/header %>
+
+<body>
+    <form action="/questions/update/<%=question.uuid%>" method="POST">
+        <div class="form-group">
+            <label for="questionText">Question</label>
+            <textarea class="form-control" id="questionText" rows="4" name="questionText"><%=question.text%></textarea>
+        </div>
+        <div class="form-group">
+            <label for="selectType">Question Type</label>
+            <select class="form-control" id="selectType" name="questionType" value="">
+                <option value="1" <% if (question.type==1) {%>selected<%}%>>Truth/Dare</option>
+                <option value="2" <% if (question.type==2) {%>selected<%}%>>Theme</option>
+                <option value="3" <% if (question.type==3) {%>selected<%}%>>Action</option>
+                <option value="4" <% if (question.type==4) {%>selected<%}%>>Have you ever Done</option>
+                <option value="5" <% if (question.type==5) {%>selected<%}%>>MiniGame</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="selectDifficulty">Question Difficulty</label>
+            <select class="form-control" id="selectDifficulty" name="questionDifficulty" value="<%=question.difficulty%>">
+                <option value="1" <% if (question.difficulty==1) {%>selected<%}%>>1</option>
+                <option value="2" <% if (question.difficulty==2) {%>selected<%}%>>2</option>
+                <option value="3" <% if (question.difficulty==3) {%>selected<%}%>>3</option>
+                <option value="4" <% if (question.difficulty==4) {%>selected<%}%>>4</option>
+                <option value="5" <% if (question.difficulty==5) {%>selected<%}%>>5</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</body>
+<% include ../partials/footer %>
+
+</html>
