@@ -2,22 +2,15 @@ var express = require('express');
 var router = express.Router();
 var questionService = require('../services/questionService');
 
-const types = [
-    { id: 1, value: "Truth/Dare" },
-    { id: 2, value: "Theme" },
-    { id: 3, value: "Action" },
-    { id: 4, value: "Have you ever done" },
-    { id: 5, value: "Minigame" }
-]
 
 /* GET create new question. */
-router.get('/', function (req, res, next) {
+router.get('/', async function (req, res, next) {
     res.redirect('/questions/list');
 });
 
 /* GET create new question. */
-router.get('/create', function (req, res, next) {
-    res.render('questions/create', { types: types });
+router.get('/create',async function (req, res, next) {
+    res.render('questions/create', { types: await questionService.getTypes() });
 });
 
 /* POST create new question. */
@@ -32,13 +25,13 @@ router.post('/create', async function (req, res, next) {
 
 /* GET list questions. */
 router.get('/list', async function (req, res, next) {
-    res.render('questions/list', { types: types, questions: await questionService.findAllQuestions() });
+    res.render('questions/list', { types: await questionService.getTypes(), questions: await questionService.findAllQuestions() });
 });
 
 /* GET update question. */
 router.get('/update/:id', async function (req, res, next) {
     var questionId = req.params.id;
-    res.render('questions/update', { question: await questionService.findQuestionById(questionId) });
+    res.render('questions/update', { types: await questionService.getTypes(), question: await questionService.findQuestionById(questionId) });
 });
 
 /* POST update question. */

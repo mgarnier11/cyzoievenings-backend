@@ -10,14 +10,12 @@
             <textarea class="form-control" id="questionText" rows="4" name="questionText"><%=question.text%></textarea>
         </div>
         <div class="form-group">
-            <label for="selectType">Question Type</label>
-            <select class="form-control" id="selectType" name="questionType" value="">
-                <option value="1" <% if (question.type==1) {%>selected<%}%>>Truth/Dare</option>
-                <option value="2" <% if (question.type==2) {%>selected<%}%>>Theme</option>
-                <option value="3" <% if (question.type==3) {%>selected<%}%>>Action</option>
-                <option value="4" <% if (question.type==4) {%>selected<%}%>>Have you ever Done</option>
-                <option value="5" <% if (question.type==5) {%>selected<%}%>>MiniGame</option>
-            </select>
+                <label for="selectType">Question Type</label>
+                <select class="form-control" id="selectType" name="questionType">
+                    <% types.forEach(function(type){%>
+                        <option value="<%=type.id%>"><%=type.value%></option>
+                    <% })%>
+                </select>
         </div>
         <div class="form-group">
             <label for="selectDifficulty">Question Difficulty</label>

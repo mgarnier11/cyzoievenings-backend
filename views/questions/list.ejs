@@ -22,8 +22,8 @@
                     <td class="questionCell"><span><%=types[question.type - 1].value %></span></td>
                     <td class="questionCell"><span><%=question.difficulty%></span></td>
                     <td class="questionCell"><span><%=question.nbPlayers%></span></td>
-                    <td class="questionCell text-center"><a href="/questions/update/<%=question.uuid%>"><span class="glyphicon glyphicon-edit"></span></a></td>
-                    <td class="questionCell text-center"><a href="/questions/delete/<%=question.uuid%>"><span class="glyphicon glyphicon-remove"></span></a></td>
+                    <td class="questionCell"><a href="/questions/update/<%=question.uuid%>"><span class="glyphicon glyphicon-edit"></span></a></td>
+                    <td class="questionCell"><a href="/questions/delete/<%=question.uuid%>"><span class="glyphicon glyphicon-remove"></span></a></td>
                 </tr>
             <%})%>
         </tbody>

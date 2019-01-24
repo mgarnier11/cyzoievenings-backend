@@ -25,6 +25,15 @@ function searchMany(source, find) {
     return result;
 }
 
+
+const types = [
+    { id: 1, value: "Vérité" },
+    { id: 2, value: "Theme" },
+    { id: 3, value: "Action" },
+    { id: 4, value: "As-tu déja" },
+    { id: 5, value: "Minijeu" }
+]
+
 var questionService = {
     createQuestion: (question) => {
         return new Promise(async (resolve, reject) => {
@@ -82,6 +91,15 @@ var questionService = {
             try {
                 var result = await questionDao.upsertQuestion(question);
                 resolve(result);
+            } catch (error) {
+                reject(error);
+            }
+        })
+    },
+    getTypes: () => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                resolve(types);
             } catch (error) {
                 reject(error);
             }
