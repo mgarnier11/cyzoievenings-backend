@@ -63,6 +63,12 @@ mongoClient.connect(myDbUrl, { useNewUrlParser: true }, async (err, db) => {
 	server.on('error', onError);
 	server.on('listening', onListening);
 
+	var io = require('socket.io')(server);
+
+	io.on('connection', (socket) => {
+		console.log('an user connected');
+	})
+
 	/**
  	 * Event listener for HTTP server "error" event.
  	 */
