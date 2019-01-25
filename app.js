@@ -15,6 +15,8 @@ const indexController = require('./controllers/indexController');
 const apiQuestionController = require('./controllers/apiQuestionController');
 const questionController = require('./controllers/questionController');
 
+const questionSocketController = require('./socketControllers/questionSocketController');
+
 
 
 
@@ -67,6 +69,10 @@ mongoClient.connect(myDbUrl, { useNewUrlParser: true }, async (err, db) => {
 
 	io.on('connection', (socket) => {
 		console.log('an user connected');
+		questionSocketController(socket, io);
+
+
+
 	})
 
 	/**

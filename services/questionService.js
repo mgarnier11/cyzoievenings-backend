@@ -6,6 +6,7 @@ function processQuestion(question) {
     var playerMPos = searchMany(question.text, '{PlayerF}');
     var playerFPos = searchMany(question.text, '{PlayerM}');
 
+    if (!question.uuid) question.uuid = uuidv1();
     question.nbPlayers = playerPos.length + playerMPos.length + playerFPos.length;
     if (!question.nbPicked) question.nbPicked = 0;
     if (!question.nbDone) question.nbDone = 0;
@@ -43,8 +44,6 @@ const types = [
 var questionService = {
     createQuestion: (question) => {
         return new Promise(async (resolve, reject) => {
-            question.uuid = uuidv1();
-
             question = processQuestion(question);
 
             try {

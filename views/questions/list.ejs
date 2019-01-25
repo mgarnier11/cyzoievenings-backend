@@ -65,7 +65,7 @@
                     <td class="questionCell actions">                
                         <a href="/questions/update/<%=question.uuid%>" class="btn btn-primary">Update</a>
                         <a href="/questions/delete/<%=question.uuid%>" class="btn btn-danger">Delete</a>
-                        <!--<a href="/questions/switch/<%=question.uuid%>" class="btn btn-success"><%= question.hidden ? 'Show' : 'Hide' %></a>-->
+                        <a href="/questions/switch/<%=question.uuid%>" class="btn btn-success"><%= question.hidden ? 'Show' : 'Hide' %></a>
                     </td>
                 </tr>
             <%})%>
