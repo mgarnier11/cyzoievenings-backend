@@ -51,7 +51,7 @@
             <% questions.forEach((question) => {%>
                 <tr class="listItem <%= question.hidden ? 'hidden' : '' %>">
                     <td><%=question.text %></td>
-                    <td class="questionCell type text-center"><span><%=types[question.type - 1].value %></span></td>
+                    <td class="questionCell type text-center"><span><%= question.type != undefined ? question.type.value : '' %></span></td>
                     <td class="questionCell difficulty">
                         <% for(var i = 0; i < 5; i++) { %>
                             <% if(i < question.difficulty) { %>
@@ -65,7 +65,6 @@
                     <td class="questionCell actions">                
                         <a href="/questions/update/<%=question.uuid%>" class="btn btn-primary">Update</a>
                         <a href="/questions/delete/<%=question.uuid%>" class="btn btn-danger">Delete</a>
-                        <a href="/questions/switch/<%=question.uuid%>" class="btn btn-success"><%= question.hidden ? 'Show' : 'Hide' %></a>
                     </td>
                 </tr>
             <%})%>

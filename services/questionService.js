@@ -15,6 +15,14 @@ function processQuestion(question) {
     return question;
 }
 
+function beforeReturnQuestion(question) {
+    question.type = types.find((type) => {
+        return type.id == question.type;
+    });
+
+    return question;
+}
+
 function searchMany(source, find) {
     var result = [];
     for (i = 0; i < source.length; ++i) {
@@ -44,6 +52,8 @@ const types = [
 var questionService = {
     createQuestion: (question) => {
         return new Promise(async (resolve, reject) => {
+            question.uuid = uuidv1();
+
             question = processQuestion(question);
 
             try {
@@ -70,6 +80,9 @@ var questionService = {
         return new Promise(async (resolve, reject) => {
             try {
                 var result = await questionDao.findAllQuestions();
+
+                for (let i = 0; i < result.length; i++) result[i] = beforeReturnQuestion(result[i]);
+
                 resolve(result);
             } catch (error) {
                 reject(error);
@@ -77,10 +90,27 @@ var questionService = {
         })
     },
 
+    findQuestionsByTypeId: (typeId) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                var result = await questionDao.findQuestionsByTypeId(typeId);
+
+                for (let i = 0; i < result.length; i++) result[i] = beforeReturnQuestion(result[i]);
+
+                resolve(result);
+            } catch (error) {
+                reject(error);
+            }
+        })
+    },   
+
     findQuestionById: (questionId) => {
         return new Promise(async (resolve, reject) => {
             try {
                 var result = await questionDao.findQuestionById(questionId);
+
+                result = beforeReturnQuestion(result);
+
                 resolve(result);
             } catch (error) {
                 reject(error);

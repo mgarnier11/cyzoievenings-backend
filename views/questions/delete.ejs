@@ -16,7 +16,7 @@
             <tbody>
                 <tr>
                     <td><%=question.text %></td>
-                    <td class="questionCell type"><span><%=types[question.type - 1].value %></span></td>
+                    <td class="questionCell type text-center"><span><%= question.type != undefined ? question.type.value : '' %></span></td>
                     <td class="questionCell difficulty">
                         <% for(var i = 0; i < 5; i++) { %>
                             <% if(i < question.difficulty) { %>

@@ -10,7 +10,7 @@ var questionDao = {
 
     deleteQuestion: (question) => {
         return new Promise((resolve, reject) => {
-            db.collection('questions').deleteOne(question, (err, result) => {
+            db.collection('questions').deleteOne({uuid: question.uuid}, (err, result) => {
                 if (err) reject(err);
                 else resolve(result);
             });
@@ -22,6 +22,15 @@ var questionDao = {
             db.collection('questions').find({}).toArray((err, result) => {
                 if (err) reject(err);
                 else resolve(result.reverse());
+            });
+        });
+    },
+
+    findQuestionsByTypeId: (typeId) => {
+        return new Promise((resolve, reject) => {
+            db.collection('questions').find({type: typeId}).toArray((err, result) => {
+                if (err) reject(err);
+                else resolve(result);
             });
         });
     },

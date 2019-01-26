@@ -39,8 +39,8 @@ mongoClient.connect(myDbUrl, { useNewUrlParser: true }, async (err, db) => {
 	app.use(express.static(path.join(__dirname, 'public')));
 
 
-	app.use('/', indexController);
-	app.use('/questions', questionController);
+	//app.use('/', indexController);
+	//app.use('/questions', questionController);
 	app.use('/questions/api', apiQuestionController);
 
 	// catch 404 and forward to error handler
