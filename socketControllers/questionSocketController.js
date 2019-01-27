@@ -6,8 +6,12 @@ function questionSocketController(socket, io) {
         socket.emit('returnListQuestions', await questionService.listQuestions());
     });
 
-    socket.on('getListTypes', async () => {
-        socket.emit('returnListTypes', await typeService.listTypes());
+    socket.on('getRandomQuestion', async () => {
+        socket.emit('returnQuestion', await questionService.getRandomQuestion());
+    });
+
+    socket.on('getQuestionById', async (questionId) => {
+        socket.emit('returnQuestion', await questionService.getQuestionById(questionId));
     });
 
     socket.on('addQuestion', async (question) => {

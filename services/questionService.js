@@ -112,7 +112,7 @@ function getRandomQuestionByDifficulty(difficulty) {
 function getRandomQuestionByDifficultyAndTypeId(typeId, difficulty) {
     return new Promise(async (resolve, reject) => {
         try {
-            let filteredQuestions = await listQuestionsByDifficultyAndType(typeId, difficulty);
+            let filteredQuestions = await listQuestionsByDifficultyAndTypeId(typeId, difficulty);
 
             resolve(beforeReturnQuestion(filteredQuestions[Math.floor(Math.random() * filteredQuestions.length)]));
         } catch (error) {

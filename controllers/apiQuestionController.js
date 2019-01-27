@@ -3,9 +3,10 @@ const questionService = require('../services/questionService');
 const typeService = require('../services/typeService');
 
 router.get('/id/:questionId', async (req, res) => {
-    var questionId = req.params.questionId;
     try {
-        var question = await questionService.getQuestionById(questionId);
+        let questionId = req.params.questionId;
+
+        let question = await questionService.getQuestionById(questionId);
 
         question.nbPicked += 1;
 
@@ -19,9 +20,10 @@ router.get('/id/:questionId', async (req, res) => {
 });
 
 router.get('/done/:questionId', async (req, res) => {
-    var questionId = req.params.questionId;
     try {
-        var question = await questionService.getQuestionById(questionId);
+        let questionId = req.params.questionId;
+
+        let question = await questionService.getQuestionById(questionId);
 
         question.nbDone += 1;
 
@@ -34,18 +36,9 @@ router.get('/done/:questionId', async (req, res) => {
     }
 });
 
-router.get('/types', async (req, res) => {
+router.get('/random', async (req, res) => {
     try {
-        res.send(await typeService.listTypes());
-    } catch (error) {
-        console.log(error);
-        res.send('error');
-    }
-});
-
-router.get('/randomQuestion', async (req, res) => {
-    try {
-        var question = await questionService.getRandomQuestion();
+        let question = await questionService.getRandomQuestion();
 
         question.nbPicked += 1;
 
@@ -58,10 +51,11 @@ router.get('/randomQuestion', async (req, res) => {
     }
 });
 
-router.get('/randomQuestion/:typeId', async (req, res) => {
-    var typeId = parseInt(req.params.typeId);
+router.get('/random/type/:typeId', async (req, res) => {
     try {
-        var question = await questionService.getRandomQuestionByTypeId(typeId);
+        let typeId = parseInt(req.params.typeId);
+
+        let question = await questionService.getRandomQuestionByTypeId(typeId);
 
         question.nbPicked += 1;
 
@@ -74,9 +68,37 @@ router.get('/randomQuestion/:typeId', async (req, res) => {
     }
 });
 
-router.get('/randomType', async (req, res) => {
+
+router.get('/random/diff/:difficulty', async (req, res) => {
     try {
-        res.send(await typeService.getRandomType());
+        let difficulty = parseInt(req.params.difficulty);
+
+        let question = await questionService.getRandomQuestionByDifficulty(difficulty);
+
+        question.nbPicked += 1;
+
+        res.send(question);
+
+        questionService.upsertQuestion(question);
+    } catch (error) {
+        console.log(error);
+        res.send('error');
+    }
+});
+
+
+router.get('/random/typeDiff/:typeId/:difficulty', async (req, res) => {
+    try {
+        let difficulty = parseInt(req.params.difficulty);
+        let typeId = parseInt(req.params.typeId);
+
+        let question = await questionService.getRandomQuestionByDifficultyAndTypeId(typeId, difficulty);
+
+        question.nbPicked += 1;
+
+        res.send(question);
+
+        questionService.upsertQuestion(question);
     } catch (error) {
         console.log(error);
         res.send('error');

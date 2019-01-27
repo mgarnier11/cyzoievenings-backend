@@ -12,8 +12,10 @@ const myDbName = (process.env.DB_NAME ? process.env.DB_NAME : 'game-database');
 const myPort = (process.env.PORT ? process.env.PORT : 3000);
 
 const apiQuestionController = require('./controllers/apiQuestionController');
+const apiTypeController = require('./controllers/apiTypeController');
 
 const questionSocketController = require('./socketControllers/questionSocketController');
+const typeSocketController = require('./socketControllers/typeSocketController');
 
 
 
@@ -26,20 +28,15 @@ mongoClient.connect(myDbUrl, { useNewUrlParser: true }, async (err, db) => {
 
     var app = express();
 
-    // view engine setup
-    app.set('views', path.join(__dirname, 'views'));
-    app.set('view engine', 'ejs');
-
     app.use(logger('dev'));
     app.use(express.json());
     app.use(express.urlencoded({ extended: false }));
-    app.use(cookieParser());
-    app.use(express.static(path.join(__dirname, 'public')));
-
 
     //app.use('/', indexController);
     //app.use('/questions', questionController);
-    app.use('/questions/api', apiQuestionController);
+    app.use('/api/questions', apiQuestionController);
+    app.use('/api/types', apiTypeController);
+
 
     // catch 404 and forward to error handler
     app.use(function (req, res, next) {
@@ -54,7 +51,7 @@ mongoClient.connect(myDbUrl, { useNewUrlParser: true }, async (err, db) => {
 
         // render the error page
         res.status(err.status || 500);
-        res.render('error');
+        res.send('error');
     });
 
     var server = http.createServer(app);
@@ -68,6 +65,7 @@ mongoClient.connect(myDbUrl, { useNewUrlParser: true }, async (err, db) => {
     io.on('connection', (socket) => {
         console.log('an user connected');
         questionSocketController(socket, io);
+        typeSocketController(socket, io);
     })
 
 	/**
