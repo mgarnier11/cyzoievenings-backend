@@ -1,16 +1,17 @@
-var questionService = require('../services/questionService');
+const questionService = require('../services/questionService');
+const typeService = require('../services/typeService');
 
 function questionSocketController(socket, io) {
     socket.on('getListQuestions', async () => {
-        socket.emit('returnListQuestions', await questionService.findAllQuestions());
+        socket.emit('returnListQuestions', await questionService.listQuestions());
     });
 
     socket.on('getListTypes', async () => {
-        socket.emit('returnListTypes', await questionService.getTypes());
+        socket.emit('returnListTypes', await typeService.listTypes());
     });
 
     socket.on('addQuestion', async (question) => {
-        await questionService.createQuestion(question);
+        await questionService.upsertQuestion(question);
 
         io.sockets.emit('questionAdded', question);
     });
@@ -30,19 +31,19 @@ function questionSocketController(socket, io) {
 
     socket.on('upsertQuestion', async (question) => {
         var res = await questionService.upsertQuestion(question);
-        question = await questionService.findQuestionById(question.uuid);
         if (res.modifiedCount != 0) {
+            question = await questionService.getQuestionById(question.id);
+
             io.sockets.emit('questionModified', question);
         } else if (res.upsertedCount != 0) {
+            question = await questionService.getQuestionByMongoId(res.upsertedId._id);
+
             io.sockets.emit('questionAdded', question);
         }
     });
 
     socket.on('switchHideQuestion', async (question) => {
         question.hidden = !question.hidden;
-
-        if (typeof question.type == 'object') question.type = question.type.id;
-        if (question._id != undefined) delete question._id;
 
         await questionService.upsertQuestion(question);
 

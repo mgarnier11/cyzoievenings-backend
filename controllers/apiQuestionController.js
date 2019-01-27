@@ -1,10 +1,11 @@
-var router = require('express').Router();
-var questionService = require('../services/questionService');
+const router = require('express').Router();
+const questionService = require('../services/questionService');
+const typeService = require('../services/typeService');
 
 router.get('/id/:questionId', async (req, res) => {
     var questionId = req.params.questionId;
     try {
-        var question = await questionService.findQuestionById(questionId);
+        var question = await questionService.getQuestionById(questionId);
 
         question.nbPicked += 1;
 
@@ -17,10 +18,10 @@ router.get('/id/:questionId', async (req, res) => {
     }
 });
 
-router.post('/done/:questionId', async (req, res) => {
+router.get('/done/:questionId', async (req, res) => {
     var questionId = req.params.questionId;
     try {
-        var question = await questionService.findQuestionById(questionId);
+        var question = await questionService.getQuestionById(questionId);
 
         question.nbDone += 1;
 
@@ -35,19 +36,16 @@ router.post('/done/:questionId', async (req, res) => {
 
 router.get('/types', async (req, res) => {
     try {
-        res.send(await questionService.getTypes());
+        res.send(await typeService.listTypes());
     } catch (error) {
         console.log(error);
         res.send('error');
     }
 });
 
-
 router.get('/randomQuestion', async (req, res) => {
     try {
-        var questions = await questionService.findAllQuestions();
-
-        var question = questions[Math.floor(Math.random() * questions.length)]
+        var question = await questionService.getRandomQuestion();
 
         question.nbPicked += 1;
 
@@ -63,9 +61,7 @@ router.get('/randomQuestion', async (req, res) => {
 router.get('/randomQuestion/:typeId', async (req, res) => {
     var typeId = parseInt(req.params.typeId);
     try {
-        var questions = await questionService.findQuestionsByTypeId(typeId);
-
-        var question = questions[Math.floor(Math.random() * questions.length)]
+        var question = await questionService.getRandomQuestionByTypeId(typeId);
 
         question.nbPicked += 1;
 
@@ -80,11 +76,7 @@ router.get('/randomQuestion/:typeId', async (req, res) => {
 
 router.get('/randomType', async (req, res) => {
     try {
-        var types = await questionService.getTypes();
-
-        var type = types[Math.floor(Math.random() * types.length)]
-
-        res.send(type);
+        res.send(await typeService.getRandomType());
     } catch (error) {
         console.log(error);
         res.send('error');
@@ -93,7 +85,7 @@ router.get('/randomType', async (req, res) => {
 
 router.get('/list', async (req, res) => {
     try {
-        res.send(await questionService.findAllQuestions());
+        res.send(await questionService.listQuestions());
     } catch (error) {
         console.log(error);
         res.send('error');

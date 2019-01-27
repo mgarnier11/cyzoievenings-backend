@@ -1,27 +1,6 @@
-var questionDao = require('../daos/questionDao');
+const questionDao = require('../daos/questionDao');
+const typeService = require('./typeService');
 const uuidv1 = require('uuid/v1');
-
-function processQuestion(question) {
-    var playerPos = searchMany(question.text, '{Player}');
-    var playerMPos = searchMany(question.text, '{PlayerF}');
-    var playerFPos = searchMany(question.text, '{PlayerM}');
-
-    if (!question.uuid) question.uuid = uuidv1();
-    question.nbPlayers = playerPos.length + playerMPos.length + playerFPos.length;
-    if (!question.nbPicked) question.nbPicked = 0;
-    if (!question.nbDone) question.nbDone = 0;
-    if (question.hidden == undefined) question.hidden = false;
-
-    return question;
-}
-
-function beforeReturnQuestion(question) {
-    question.type = types.find((type) => {
-        return type.id == question.type;
-    });
-
-    return question;
-}
 
 function searchMany(source, find) {
     var result = [];
@@ -35,111 +14,226 @@ function searchMany(source, find) {
     return result;
 }
 
+function beforeInsertQuestion(question) {
+    let playerPos = searchMany(question.text, '{Player}');
+    let playerMPos = searchMany(question.text, '{PlayerF}');
+    let playerFPos = searchMany(question.text, '{PlayerM}');
 
-const types = [
-    { id: 1, value: "Vérité" },
-    { id: 2, value: "Theme" },
-    { id: 3, value: "Action de groupe" },
-    { id: 4, value: "As-tu déja" },
-    { id: 5, value: "Minijeu" },
-    { id: 6, value: "Action" },
-    { id: 7, value: "Vérité de groupe" },
-    { id: 8, value: "Tu préfères" },
+    let newQuestion = {};
 
+    newQuestion.id = (question.id || uuidv1());
+    newQuestion.text = question.text;
+    newQuestion.nbPlayers = playerPos.length + playerMPos.length + playerFPos.length;
+    newQuestion.difficulty = (question.difficulty || 1);
+    newQuestion.typeId = (question.typeId || (question.type ? question.type.id : 1));
+    newQuestion.nbPicked = (question.nbPicked || 0);
+    newQuestion.nbDone = (question.nbDone || 0);
+    newQuestion.hidden = (question.hidden || false);
 
-]
+    return newQuestion;
+}
+
+function beforeReturnQuestion(question) {
+    return new Promise(async (resolve, reject) => {
+        question.type = await typeService.getTypeById(question.typeId);
+
+        resolve(question);
+    })
+}
+
+async function beforeReturnLstQuestions(lstQuestions) {
+    for (let i = 0; i < lstQuestions.length; i++) {
+        lstQuestions[i] = await beforeReturnQuestion(lstQuestions[i]);
+    }
+
+    return lstQuestions;
+}
+
+function getQuestionById(questionId) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let question = await questionDao.findQuestionById(questionId);
+
+            resolve(beforeReturnQuestion(question));
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+function getQuestionByMongoId(questionMongoId) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let question = await questionDao.findQuestionByMongoId(questionMongoId);
+
+            resolve(beforeReturnQuestion(question));
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+function getRandomQuestion() {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let allQuestions = await listQuestions();
+
+            resolve(beforeReturnQuestion(allQuestions[Math.floor(Math.random() * allQuestions.length)]));
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+function getRandomQuestionByTypeId(typeId) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let typeQuestions = await listQuestionsByTypeId(typeId);
+
+            resolve(beforeReturnQuestion(typeQuestions[Math.floor(Math.random() * typeQuestions.length)]));
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+function getRandomQuestionByDifficulty(difficulty) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let diffQuestions = await listQuestionsByDifficulty(difficulty)
+
+            resolve(beforeReturnQuestion(diffQuestions[Math.floor(Math.random() * diffQuestions.length)]));
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+function getRandomQuestionByDifficultyAndTypeId(typeId, difficulty) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let filteredQuestions = await listQuestionsByDifficultyAndType(typeId, difficulty);
+
+            resolve(beforeReturnQuestion(filteredQuestions[Math.floor(Math.random() * filteredQuestions.length)]));
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+function upsertQuestion(newQuestion) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            var result = await questionDao.upsertQuestion(beforeInsertQuestion(newQuestion));
+            resolve(result);
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+function listQuestions() {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let allQuestions = await questionDao.listQuestions();
+
+            resolve(beforeReturnLstQuestions(allQuestions));
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+function listQuestionsByTypeId(typeId) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let allQuestions = await listQuestions();
+
+            let typeQuestions = allQuestions.filter(question => question.typeId == typeId);
+
+            resolve(beforeReturnLstQuestions(typeQuestions));
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+function listQuestionsByDifficulty(difficulty) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let allQuestions = await listQuestions();
+
+            let diffQuestions = allQuestions.filter(question => question.difficulty == difficulty);
+
+            resolve(beforeReturnLstQuestions(diffQuestions));
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+function listQuestionsByDifficultyAndTypeId(typeId, difficulty) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let allQuestions = await listQuestions();
+
+            let filteredQuestions = allQuestions.filter(question => question.typeId == typeId && question.difficulty == difficulty);
+
+            resolve(beforeReturnLstQuestions(filteredQuestions));
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+function deleteQuestion(question) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            var result = await deleteQuestionById(question.id);
+            resolve(result);
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+function deleteQuestionById(questionId) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            var result = await questionDao.deleteQuestionById(questionId);
+            resolve(result);
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
 
 var questionService = {
-    createQuestion: (question) => {
-        return new Promise(async (resolve, reject) => {
-            question.uuid = uuidv1();
+    getQuestionById: getQuestionById,
 
-            question = processQuestion(question);
+    getQuestionByMongoId: getQuestionByMongoId,
 
-            try {
-                var result = await questionDao.createQuestion(question);
-                resolve(result);
-            } catch (error) {
-                reject(error);
-            }
-        })
-    },
+    getRandomQuestion: getRandomQuestion,
 
-    deleteQuestion: (question) => {
-        return new Promise(async (resolve, reject) => {
-            try {
-                var result = await questionDao.deleteQuestion(question);
-                resolve(result);
-            } catch (error) {
-                reject(error);
-            }
-        })
-    },
+    getRandomQuestionByTypeId: getRandomQuestionByTypeId,
 
-    findAllQuestions: () => {
-        return new Promise(async (resolve, reject) => {
-            try {
-                var result = await questionDao.findAllQuestions();
+    getRandomQuestionByDifficulty: getRandomQuestionByDifficulty,
 
-                for (let i = 0; i < result.length; i++) result[i] = beforeReturnQuestion(result[i]);
+    getRandomQuestionByDifficultyAndTypeId: getRandomQuestionByDifficultyAndTypeId,
 
-                resolve(result);
-            } catch (error) {
-                reject(error);
-            }
-        })
-    },
+    upsertQuestion: upsertQuestion,
 
-    findQuestionsByTypeId: (typeId) => {
-        return new Promise(async (resolve, reject) => {
-            try {
-                var result = await questionDao.findQuestionsByTypeId(typeId);
+    listQuestions: listQuestions,
 
-                for (let i = 0; i < result.length; i++) result[i] = beforeReturnQuestion(result[i]);
+    listQuestionsByTypeId: listQuestionsByTypeId,
 
-                resolve(result);
-            } catch (error) {
-                reject(error);
-            }
-        })
-    },   
+    listQuestionsByDifficulty: listQuestionsByDifficulty,
 
-    findQuestionById: (questionId) => {
-        return new Promise(async (resolve, reject) => {
-            try {
-                var result = await questionDao.findQuestionById(questionId);
+    listQuestionsByDifficultyAndTypeId: listQuestionsByDifficultyAndTypeId,
 
-                result = beforeReturnQuestion(result);
+    deleteQuestion: deleteQuestion,
 
-                resolve(result);
-            } catch (error) {
-                reject(error);
-            }
-        })
-    },
-
-    upsertQuestion: (question) => {
-        return new Promise(async (resolve, reject) => {
-
-            question = processQuestion(question);
-
-            try {
-                var result = await questionDao.upsertQuestion(question);
-                resolve(result);
-            } catch (error) {
-                reject(error);
-            }
-        })
-    },
-    getTypes: () => {
-        return new Promise(async (resolve, reject) => {
-            try {
-                resolve(types);
-            } catch (error) {
-                reject(error);
-            }
-        })
-    }
-};
+    deleteQuestionById: deleteQuestionById,
+}
 
 module.exports = questionService;

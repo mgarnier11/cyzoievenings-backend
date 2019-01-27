@@ -1,23 +1,32 @@
 var questionDao = {
-    createQuestion: (question) => {
+    findQuestionById: (questionId) => {
         return new Promise((resolve, reject) => {
-            db.collection('questions').insertOne(question, (err, result) => {
+            db.collection('questions').findOne({ id: questionId }, (err, result) => {
                 if (err) reject(err);
                 else resolve(result);
             });
         });
     },
 
-    deleteQuestion: (question) => {
+    findQuestionByMongoId: (questionMongoId) => {
         return new Promise((resolve, reject) => {
-            db.collection('questions').deleteOne({uuid: question.uuid}, (err, result) => {
+            db.collection('questions').findOne({ _id: questionMongoId }, (err, result) => {
                 if (err) reject(err);
                 else resolve(result);
             });
         });
     },
 
-    findAllQuestions: () => {
+    upsertQuestion: (newQuestion) => {
+        return new Promise((resolve, reject) => {
+            db.collection('questions').updateOne({ id: newQuestion.id }, { $set: newQuestion }, { upsert: true }, (err, result) => {
+                if (err) reject(err);
+                else resolve(result);
+            });
+        });
+    },
+
+    listQuestions: () => {
         return new Promise((resolve, reject) => {
             db.collection('questions').find({}).toArray((err, result) => {
                 if (err) reject(err);
@@ -26,27 +35,9 @@ var questionDao = {
         });
     },
 
-    findQuestionsByTypeId: (typeId) => {
+    deleteQuestionById: (questionId) => {
         return new Promise((resolve, reject) => {
-            db.collection('questions').find({type: typeId}).toArray((err, result) => {
-                if (err) reject(err);
-                else resolve(result);
-            });
-        });
-    },
-
-    findQuestionById: (questionId) => {
-        return new Promise((resolve, reject) => {
-            db.collection('questions').findOne({ uuid: questionId }, (err, result) => {
-                if (err) reject(err);
-                else resolve(result);
-            });
-        });
-    },
-
-    upsertQuestion: (question) => {
-        return new Promise((resolve, reject) => {
-            db.collection('questions').updateOne({ uuid: question.uuid }, { $set: question }, { upsert: true }, (err, result) => {
+            db.collection('questions').deleteOne({ id: questionId }, (err, result) => {
                 if (err) reject(err);
                 else resolve(result);
             });
@@ -54,4 +45,4 @@ var questionDao = {
     }
 }
 
-module.exports = questionDao
+module.exports = questionDao;
