@@ -90,7 +90,7 @@ function getRandomQuestionMaxDiff(maxDiff) {
         try {
             let questions = await listQuestionsMaxDiff(maxDiff);
 
-            resolve(beforeReturnQuestion(allQuestions[Math.floor(Math.random() * allQuestions.length)]));
+            resolve(beforeReturnQuestion(questions[Math.floor(Math.random() * questions.length)]));
         } catch (error) {
             reject(error);
         }
