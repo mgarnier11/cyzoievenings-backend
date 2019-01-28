@@ -9,6 +9,8 @@ const types = [
     { id: 8, value: "Tu préfères" },
 ]
 
+const questionService = require('./questionService');
+
 function getTypeById(typeId) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -35,6 +37,24 @@ function listTypes() {
     return new Promise(async (resolve, reject) => {
         try {
             resolve(types);
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+function listTypesQ() {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let allQuestions = questionService.listQuestions();
+
+            let nTypes = [];
+
+            allQuestions.forEach(question => {
+                if (!nTypes.includes(question.type)) nTypes.push(question.type);
+            });
+
+            resolve(nTypes);
         } catch (error) {
             reject(error);
         }

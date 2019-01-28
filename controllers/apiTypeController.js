@@ -35,4 +35,15 @@ router.get('/list', async (req, res) => {
         res.send('error');
     }
 });
+
+router.get('/listQ', async (req, res) => {
+    try {
+        let types = await typeService.listTypes();
+
+        res.send(types);
+    } catch (error) {
+        console.log(error);
+        res.send('error');
+    }
+});
 module.exports = router;
