@@ -85,6 +85,18 @@ function getRandomQuestion() {
     });
 }
 
+function getRandomQuestionMaxDiff(maxDiff) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let questions = await listQuestionsMaxDiff(maxDiff);
+
+            resolve(beforeReturnQuestion(allQuestions[Math.floor(Math.random() * allQuestions.length)]));
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
 function getRandomQuestionByTypeId(typeId) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -138,6 +150,21 @@ function listQuestions() {
             let allQuestions = await questionDao.listQuestions();
 
             resolve(beforeReturnLstQuestions(allQuestions));
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+
+function listQuestionsMaxDiff(maxDiff) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let allQuestions = await questionDao.listQuestions();
+
+            let questions = allQuestions.filter(question => question.difficulty <= maxDiff)
+
+            resolve(beforeReturnLstQuestions(questions));
         } catch (error) {
             reject(error);
         }
@@ -214,6 +241,8 @@ var questionService = {
     getQuestionByMongoId: getQuestionByMongoId,
 
     getRandomQuestion: getRandomQuestion,
+
+    getRandomQuestionMaxDiff: getRandomQuestionMaxDiff,
 
     getRandomQuestionByTypeId: getRandomQuestionByTypeId,
 

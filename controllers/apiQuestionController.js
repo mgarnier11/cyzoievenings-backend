@@ -51,6 +51,23 @@ router.get('/random', async (req, res) => {
     }
 });
 
+router.get('/random/:maxDiff', async (req, res) => {
+    try {
+        let maxDiff = parseInt(req.params.maxDiff);
+
+        let question = await questionService.getRandomQuestionMaxDiff(maxDiff);
+
+        question.nbPicked += 1;
+
+        res.send(question);
+
+        questionService.upsertQuestion(question);
+    } catch (error) {
+        console.log(error);
+        res.send('error');
+    }
+});
+
 router.get('/random/type/:typeId', async (req, res) => {
     try {
         let typeId = parseInt(req.params.typeId);
