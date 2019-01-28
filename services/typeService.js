@@ -1,3 +1,5 @@
+const questionDao = require('../daos/questionDao');
+
 const types = [
     { id: 1, value: "Vérité" },
     { id: 2, value: "Theme" },
@@ -8,8 +10,6 @@ const types = [
     { id: 7, value: "Vérité de groupe" },
     { id: 8, value: "Tu préfères" },
 ]
-
-const questionService = require('./questionService');
 
 function getTypeById(typeId) {
     return new Promise(async (resolve, reject) => {
@@ -46,15 +46,17 @@ function listTypes() {
 function listTypesQ() {
     return new Promise(async (resolve, reject) => {
         try {
-            let allQuestions = questionService.listQuestions();
+            let allQuestions = await questionDao.listQuestions();
 
-            let nTypes = [];
+            let nTypesId = [];
 
             allQuestions.forEach(question => {
-                if (!nTypes.includes(question.type)) nTypes.push(question.type);
+                if (!nTypesId.includes(question.typeId)) nTypesId.push(question.typeId);
             });
 
-            resolve(nTypes);
+
+
+            resolve(types.filter(type => nTypesId.includes(type.id)));
         } catch (error) {
             reject(error);
         }

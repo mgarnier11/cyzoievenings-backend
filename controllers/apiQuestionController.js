@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const questionService = require('../services/questionService');
-const typeService = require('../services/typeService');
 
 router.get('/id/:questionId', async (req, res) => {
     try {
