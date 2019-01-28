@@ -38,7 +38,7 @@ router.get('/list', async (req, res) => {
 
 router.get('/listQ', async (req, res) => {
     try {
-        let types = await typeService.listTypes();
+        let types = await typeService.listTypesQ();
 
         res.send(types);
     } catch (error) {

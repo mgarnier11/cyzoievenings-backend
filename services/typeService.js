@@ -66,7 +66,9 @@ var typeService = {
 
     getRandomType: getRandomType,
 
-    listTypes: listTypes
+    listTypes: listTypes,
+
+    listTypesQ: listTypesQ
 }
 
 module.exports = typeService;
