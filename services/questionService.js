@@ -109,6 +109,18 @@ function getRandomQuestionMaxDiffByTypeId(maxDiff, typeId) {
     });
 }
 
+function getRandomQuestionMaxDiffByTypeIdAndMaxPlayers(maxDiff, typeId, maxPlayers) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let questions = await listQuestionsMaxDiffByTypeIdAndMaxPlayers(maxDiff, typeId, maxPlayers);
+
+            resolve(beforeReturnQuestion(questions[Math.floor(Math.random() * questions.length)]));
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
 function getRandomQuestionByTypeId(typeId) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -196,6 +208,20 @@ function listQuestionsMaxDiffByTypeId(maxDiff, typeId) {
     });
 }
 
+function listQuestionsMaxDiffByTypeIdAndMaxPlayers(maxDiff, typeId, maxPlayers) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let typeQuestions = await listQuestionsByTypeId(typeId);
+
+            let questions = typeQuestions.filter(question => question.difficulty <= maxDiff && question.nbPlayers <= maxPlayers);
+
+            resolve(beforeReturnLstQuestions(questions));
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
 function listQuestionsByTypeId(typeId) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -271,6 +297,8 @@ var questionService = {
 
     getRandomQuestionMaxDiffByTypeId: getRandomQuestionMaxDiffByTypeId,
 
+    getRandomQuestionMaxDiffByTypeIdAndMaxPlayers: getRandomQuestionMaxDiffByTypeIdAndMaxPlayers,
+
     getRandomQuestionByTypeId: getRandomQuestionByTypeId,
 
     getRandomQuestionByDifficulty: getRandomQuestionByDifficulty,
@@ -286,6 +314,8 @@ var questionService = {
     listQuestionsMaxDiff: listQuestionsMaxDiff,
 
     listQuestionsMaxDiffByTypeId: listQuestionsMaxDiffByTypeId,
+
+    listQuestionsMaxDiffByTypeIdAndMaxPlayers: listQuestionsMaxDiffByTypeIdAndMaxPlayers,
 
     listQuestionsByDifficulty: listQuestionsByDifficulty,
 
