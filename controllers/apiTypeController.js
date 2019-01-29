@@ -36,6 +36,17 @@ router.get('/randomQ', async (req, res) => {
     }
 });
 
+router.get('/randomW', async (req, res) => {
+    try {
+        let type = await typeService.getRandomTypeW();
+
+        res.send(type);
+    } catch (error) {
+        console.log(error);
+        res.send('error');
+    }
+});
+
 router.get('/list', async (req, res) => {
     try {
         let types = await typeService.listTypes();
@@ -50,6 +61,17 @@ router.get('/list', async (req, res) => {
 router.get('/listQ', async (req, res) => {
     try {
         let types = await typeService.listTypesQ();
+
+        res.send(types);
+    } catch (error) {
+        console.log(error);
+        res.send('error');
+    }
+});
+
+router.get('/listW', async (req, res) => {
+    try {
+        let types = await typeService.listTypesW();
 
         res.send(types);
     } catch (error) {
