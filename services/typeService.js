@@ -33,6 +33,18 @@ function getRandomType() {
     });
 }
 
+function getRandomTypeQ() {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let nTypes = await listTypesQ();
+
+            resolve(nTypes[Math.floor(Math.random() * nTypes.length)]);
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
 function listTypes() {
     return new Promise(async (resolve, reject) => {
         try {
@@ -67,6 +79,8 @@ var typeService = {
     getTypeById: getTypeById,
 
     getRandomType: getRandomType,
+
+    getRandomTypeQ: getRandomTypeQ,
 
     listTypes: listTypes,
 

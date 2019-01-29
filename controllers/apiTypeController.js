@@ -25,6 +25,17 @@ router.get('/random', async (req, res) => {
     }
 });
 
+router.get('/randomQ', async (req, res) => {
+    try {
+        let type = await typeService.getRandomTypeQ();
+
+        res.send(type);
+    } catch (error) {
+        console.log(error);
+        res.send('error');
+    }
+});
+
 router.get('/list', async (req, res) => {
     try {
         let types = await typeService.listTypes();
