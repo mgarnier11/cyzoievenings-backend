@@ -109,7 +109,7 @@ function listTypesW() {
             let nTypes = [...types];
 
             for (let i = 0; i < nTypes.length; i++) {
-                nTypes[i].weight = nTypes.filter(typeId => typeId == nTypes[i].id).length;
+                nTypes[i].weight = nTypesId.filter(typeId => typeId == nTypes[i].id).length;
             }
 
             resolve(nTypes);
