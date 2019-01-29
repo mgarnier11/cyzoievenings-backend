@@ -97,6 +97,18 @@ function getRandomQuestionMaxDiff(maxDiff) {
     });
 }
 
+function getRandomQuestionMaxDiffByTypeId(maxDiff, typeId) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let questions = await listQuestionsMaxDiffByTypeId(maxDiff, typeId);
+
+            resolve(beforeReturnQuestion(questions[Math.floor(Math.random() * questions.length)]));
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
 function getRandomQuestionByTypeId(typeId) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -156,13 +168,26 @@ function listQuestions() {
     });
 }
 
-
 function listQuestionsMaxDiff(maxDiff) {
     return new Promise(async (resolve, reject) => {
         try {
             let allQuestions = await questionDao.listQuestions();
 
             let questions = allQuestions.filter(question => question.difficulty <= maxDiff)
+
+            resolve(beforeReturnLstQuestions(questions));
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+function listQuestionsMaxDiffByTypeId(maxDiff, typeId) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let typeQuestions = await listQuestionsByTypeId(typeId);
+
+            let questions = typeQuestions.filter(question => question.difficulty <= maxDiff)
 
             resolve(beforeReturnLstQuestions(questions));
         } catch (error) {
@@ -244,6 +269,8 @@ var questionService = {
 
     getRandomQuestionMaxDiff: getRandomQuestionMaxDiff,
 
+    getRandomQuestionMaxDiffByTypeId: getRandomQuestionMaxDiffByTypeId,
+
     getRandomQuestionByTypeId: getRandomQuestionByTypeId,
 
     getRandomQuestionByDifficulty: getRandomQuestionByDifficulty,
@@ -255,6 +282,10 @@ var questionService = {
     listQuestions: listQuestions,
 
     listQuestionsByTypeId: listQuestionsByTypeId,
+
+    listQuestionsMaxDiff: listQuestionsMaxDiff,
+
+    listQuestionsMaxDiffByTypeId: listQuestionsMaxDiffByTypeId,
 
     listQuestionsByDifficulty: listQuestionsByDifficulty,
 

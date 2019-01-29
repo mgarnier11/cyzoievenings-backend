@@ -121,6 +121,24 @@ router.get('/random/typeDiff/:typeId/:difficulty', async (req, res) => {
     }
 });
 
+router.get('/random/typeMaxDiff/:typeId/:maxDifficulty', async (req, res) => {
+    try {
+        let maxDifficulty = parseInt(req.params.maxDifficulty);
+        let typeId = parseInt(req.params.typeId);
+
+        let question = await questionService.getRandomQuestionMaxDiffByTypeId(maxDifficulty, typeId);
+
+        question.nbPicked += 1;
+
+        res.send(question);
+
+        questionService.upsertQuestion(question);
+    } catch (error) {
+        console.log(error);
+        res.send('error');
+    }
+});
+
 router.get('/list', async (req, res) => {
     try {
         res.send(await questionService.listQuestions());
