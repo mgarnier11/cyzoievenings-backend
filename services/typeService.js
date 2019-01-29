@@ -58,7 +58,7 @@ function getRandomTypeW() {
 
     function get(input) {
         var array = [];
-        for (var item in input) {
+        for (var item of input) {
             for (let i = 0; i < item.weight; i++) {
                 array.push(item);
             }
