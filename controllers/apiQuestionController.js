@@ -141,11 +141,11 @@ router.get('/random/tmd/:typeId/:maxDifficulty', async (req, res) => {
 
 router.get('/random/tmdp/:typeId/:maxDifficulty/:maxPlayers', async (req, res) => {
     try {
-        let maxDifficulty = parseInt(req.params.maxDifficulty);
         let typeId = parseInt(req.params.typeId);
+        let maxDifficulty = parseInt(req.params.maxDifficulty);
         let maxPlayers = parseInt(req.params.maxPlayers);
 
-        let question = await questionService.randomTMDP(maxDifficulty, typeId, maxPlayers);
+        let question = await questionService.randomTMDP(typeId, maxDifficulty, maxPlayers);
 
         question.nbPicked += 1;
 
