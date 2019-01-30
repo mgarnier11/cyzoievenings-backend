@@ -12,6 +12,7 @@ const myDbName = (process.env.DB_NAME ? process.env.DB_NAME : 'game-database');
 const myPort = (process.env.PORT ? process.env.PORT : 3000);
 
 const apiQuestionController = require('./controllers/apiQuestionController');
+const apiFunctionsController = require('./controllers/apiFunctionsController');
 const apiTypeController = require('./controllers/apiTypeController');
 
 const questionSocketController = require('./socketControllers/questionSocketController');
@@ -34,8 +35,9 @@ mongoClient.connect(myDbUrl, { useNewUrlParser: true }, async (err, db) => {
 
     //app.use('/', indexController);
     //app.use('/questions', questionController);
-    app.use('/api/questions', apiQuestionController);
-    app.use('/api/types', apiTypeController);
+    app.use('/questions', apiQuestionController);
+    app.use('/types', apiTypeController);
+    app.use('/functions', apiFunctionsController);
 
 
     // catch 404 and forward to error handler

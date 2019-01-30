@@ -85,10 +85,10 @@ function getRandomQuestion() {
     });
 }
 
-function getRandomQuestionMaxDiff(maxDiff) {
+function getRandomQuestionByMaxDiff(maxDiff) {
     return new Promise(async (resolve, reject) => {
         try {
-            let questions = await listQuestionsMaxDiff(maxDiff);
+            let questions = await listQuestionsByMaxDiff(maxDiff);
 
             resolve(beforeReturnQuestion(questions[Math.floor(Math.random() * questions.length)]));
         } catch (error) {
@@ -97,10 +97,10 @@ function getRandomQuestionMaxDiff(maxDiff) {
     });
 }
 
-function getRandomQuestionMaxDiffByTypeId(maxDiff, typeId) {
+function getRandomQuestionByTypeIdMaxDiff(typeId, maxDiff) {
     return new Promise(async (resolve, reject) => {
         try {
-            let questions = await listQuestionsMaxDiffByTypeId(maxDiff, typeId);
+            let questions = await listQuestionsByTypeIdMaxDiff(typeId, maxDiff);
 
             resolve(beforeReturnQuestion(questions[Math.floor(Math.random() * questions.length)]));
         } catch (error) {
@@ -109,10 +109,10 @@ function getRandomQuestionMaxDiffByTypeId(maxDiff, typeId) {
     });
 }
 
-function getRandomQuestionMaxDiffByTypeIdAndMaxPlayers(maxDiff, typeId, maxPlayers) {
+function getRandomQuestionByTypeIdMaxDiffMaxPlayers(typeId, maxDiff, maxPlayers) {
     return new Promise(async (resolve, reject) => {
         try {
-            let questions = await listQuestionsMaxDiffByTypeIdAndMaxPlayers(maxDiff, typeId, maxPlayers);
+            let questions = await listQuestionsByTypeIdMaxDiffMaxPlayers(typeId, maxDiff, maxPlayers);
 
             resolve(beforeReturnQuestion(questions[Math.floor(Math.random() * questions.length)]));
         } catch (error) {
@@ -145,10 +145,10 @@ function getRandomQuestionByDifficulty(difficulty) {
     });
 }
 
-function getRandomQuestionByDifficultyAndTypeId(typeId, difficulty) {
+function getRandomQuestionByTypeIdDifficulty(typeId, difficulty) {
     return new Promise(async (resolve, reject) => {
         try {
-            let filteredQuestions = await listQuestionsByDifficultyAndTypeId(typeId, difficulty);
+            let filteredQuestions = await listQuestionsByTypeIdDifficulty(typeId, difficulty);
 
             resolve(beforeReturnQuestion(filteredQuestions[Math.floor(Math.random() * filteredQuestions.length)]));
         } catch (error) {
@@ -180,7 +180,7 @@ function listQuestions() {
     });
 }
 
-function listQuestionsMaxDiff(maxDiff) {
+function listQuestionsByMaxDiff(maxDiff) {
     return new Promise(async (resolve, reject) => {
         try {
             let allQuestions = await questionDao.listQuestions();
@@ -194,7 +194,7 @@ function listQuestionsMaxDiff(maxDiff) {
     });
 }
 
-function listQuestionsMaxDiffByTypeId(maxDiff, typeId) {
+function listQuestionsByTypeIdMaxDiff(typeId, maxDiff) {
     return new Promise(async (resolve, reject) => {
         try {
             let typeQuestions = await listQuestionsByTypeId(typeId);
@@ -208,7 +208,7 @@ function listQuestionsMaxDiffByTypeId(maxDiff, typeId) {
     });
 }
 
-function listQuestionsMaxDiffByTypeIdAndMaxPlayers(maxDiff, typeId, maxPlayers) {
+function listQuestionsByTypeIdMaxDiffMaxPlayers(typeId, maxDiff, maxPlayers) {
     return new Promise(async (resolve, reject) => {
         try {
             let typeQuestions = await listQuestionsByTypeId(typeId);
@@ -250,7 +250,7 @@ function listQuestionsByDifficulty(difficulty) {
     });
 }
 
-function listQuestionsByDifficultyAndTypeId(typeId, difficulty) {
+function listQuestionsByTypeIdDifficulty(typeId, difficulty) {
     return new Promise(async (resolve, reject) => {
         try {
             let allQuestions = await listQuestions();
@@ -291,35 +291,35 @@ var questionService = {
 
     getQuestionByMongoId: getQuestionByMongoId,
 
-    getRandomQuestion: getRandomQuestion,
+    random: getRandomQuestion,
 
-    getRandomQuestionMaxDiff: getRandomQuestionMaxDiff,
+    randomMD: getRandomQuestionByMaxDiff,
 
-    getRandomQuestionMaxDiffByTypeId: getRandomQuestionMaxDiffByTypeId,
+    randomTMD: getRandomQuestionByTypeIdMaxDiff,
 
-    getRandomQuestionMaxDiffByTypeIdAndMaxPlayers: getRandomQuestionMaxDiffByTypeIdAndMaxPlayers,
+    randomTMDP: getRandomQuestionByTypeIdMaxDiffMaxPlayers,
 
-    getRandomQuestionByTypeId: getRandomQuestionByTypeId,
+    randomT: getRandomQuestionByTypeId,
 
-    getRandomQuestionByDifficulty: getRandomQuestionByDifficulty,
+    randomD: getRandomQuestionByDifficulty,
 
-    getRandomQuestionByDifficultyAndTypeId: getRandomQuestionByDifficultyAndTypeId,
+    randomTD: getRandomQuestionByTypeIdDifficulty,
 
     upsertQuestion: upsertQuestion,
 
-    listQuestions: listQuestions,
+    list: listQuestions,
 
-    listQuestionsByTypeId: listQuestionsByTypeId,
+    listT: listQuestionsByTypeId,
 
-    listQuestionsMaxDiff: listQuestionsMaxDiff,
+    listMD: listQuestionsByMaxDiff,
 
-    listQuestionsMaxDiffByTypeId: listQuestionsMaxDiffByTypeId,
+    listTMD: listQuestionsByTypeIdMaxDiff,
 
-    listQuestionsMaxDiffByTypeIdAndMaxPlayers: listQuestionsMaxDiffByTypeIdAndMaxPlayers,
+    listTMDP: listQuestionsByTypeIdMaxDiffMaxPlayers,
 
-    listQuestionsByDifficulty: listQuestionsByDifficulty,
+    listD: listQuestionsByDifficulty,
 
-    listQuestionsByDifficultyAndTypeId: listQuestionsByDifficultyAndTypeId,
+    listTD: listQuestionsByTypeIdDifficulty,
 
     deleteQuestion: deleteQuestion,
 

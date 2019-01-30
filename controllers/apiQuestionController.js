@@ -37,7 +37,7 @@ router.get('/done/:questionId', async (req, res) => {
 
 router.get('/random', async (req, res) => {
     try {
-        let question = await questionService.getRandomQuestion();
+        let question = await questionService.random();
 
         question.nbPicked += 1;
 
@@ -50,11 +50,11 @@ router.get('/random', async (req, res) => {
     }
 });
 
-router.get('/random/:maxDiff', async (req, res) => {
+router.get('/random/md/:maxDiff', async (req, res) => {
     try {
         let maxDiff = parseInt(req.params.maxDiff);
 
-        let question = await questionService.getRandomQuestionMaxDiff(maxDiff);
+        let question = await questionService.randomMD(maxDiff);
 
         question.nbPicked += 1;
 
@@ -67,11 +67,11 @@ router.get('/random/:maxDiff', async (req, res) => {
     }
 });
 
-router.get('/random/type/:typeId', async (req, res) => {
+router.get('/random/t/:typeId', async (req, res) => {
     try {
         let typeId = parseInt(req.params.typeId);
 
-        let question = await questionService.getRandomQuestionByTypeId(typeId);
+        let question = await questionService.randomT(typeId);
 
         question.nbPicked += 1;
 
@@ -85,11 +85,11 @@ router.get('/random/type/:typeId', async (req, res) => {
 });
 
 
-router.get('/random/diff/:difficulty', async (req, res) => {
+router.get('/random/d/:difficulty', async (req, res) => {
     try {
         let difficulty = parseInt(req.params.difficulty);
 
-        let question = await questionService.getRandomQuestionByDifficulty(difficulty);
+        let question = await questionService.randomD(difficulty);
 
         question.nbPicked += 1;
 
@@ -103,12 +103,12 @@ router.get('/random/diff/:difficulty', async (req, res) => {
 });
 
 
-router.get('/random/typeDiff/:typeId/:difficulty', async (req, res) => {
+router.get('/random/td/:typeId/:difficulty', async (req, res) => {
     try {
         let difficulty = parseInt(req.params.difficulty);
         let typeId = parseInt(req.params.typeId);
 
-        let question = await questionService.getRandomQuestionByDifficultyAndTypeId(typeId, difficulty);
+        let question = await questionService.randomTD(typeId, difficulty);
 
         question.nbPicked += 1;
 
@@ -121,12 +121,12 @@ router.get('/random/typeDiff/:typeId/:difficulty', async (req, res) => {
     }
 });
 
-router.get('/random/typeMaxDiff/:typeId/:maxDifficulty', async (req, res) => {
+router.get('/random/tmd/:typeId/:maxDifficulty', async (req, res) => {
     try {
         let maxDifficulty = parseInt(req.params.maxDifficulty);
         let typeId = parseInt(req.params.typeId);
 
-        let question = await questionService.getRandomQuestionMaxDiffByTypeId(maxDifficulty, typeId);
+        let question = await questionService.randomTMD(maxDifficulty, typeId);
 
         question.nbPicked += 1;
 
@@ -139,13 +139,13 @@ router.get('/random/typeMaxDiff/:typeId/:maxDifficulty', async (req, res) => {
     }
 });
 
-router.get('/random/typeMaxDiffMaxPlayers/:typeId/:maxDifficulty/:maxPlayers', async (req, res) => {
+router.get('/random/tmdp/:typeId/:maxDifficulty/:maxPlayers', async (req, res) => {
     try {
         let maxDifficulty = parseInt(req.params.maxDifficulty);
         let typeId = parseInt(req.params.typeId);
         let maxPlayers = parseInt(req.params.maxPlayers);
 
-        let question = await questionService.getRandomQuestionMaxDiffByTypeIdAndMaxPlayers(maxDifficulty, typeId, maxPlayers);
+        let question = await questionService.randomTMDP(maxDifficulty, typeId, maxPlayers);
 
         question.nbPicked += 1;
 
@@ -160,7 +160,7 @@ router.get('/random/typeMaxDiffMaxPlayers/:typeId/:maxDifficulty/:maxPlayers', a
 
 router.get('/list', async (req, res) => {
     try {
-        res.send(await questionService.listQuestions());
+        res.send(await questionService.list());
     } catch (error) {
         console.log(error);
         res.send('error');
