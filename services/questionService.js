@@ -22,6 +22,14 @@ function beforeInsertQuestion(question) {
 
     let newQuestion = {};
 
+    let gender = question.text.substring(0, 3);
+    if (gender == '{M}')
+        newQuestion.gender = 0;
+    else if (gender == '{F}')
+        newQuestion.gender = 1;
+    else
+        newQuestion.gender = -1;
+
     newQuestion.id = (question.id || uuidv1());
     newQuestion.text = question.text;
     newQuestion.nbPlayers = playerPos.length + playerMPos.length + playerFPos.length;
@@ -286,6 +294,20 @@ function listQuestionsByTypeIdMaxDiffMaxPlayers(typeId, maxDiff, maxPlayers) {
     });
 }
 
+function listQuestionsByTypeIdMaxDiffMaxPlayersGender(typeId, maxDiff, maxPlayers, gender) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let questions = await listQuestionsByTypeIdMaxDiffMaxPlayers(typeId, maxDiff, maxPlayers);
+
+            questions = questions.filter(question => question.gender == gender || question.gender == -1);
+
+            resolve(beforeReturnLstQuestions(questions));
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
 function listQuestionsByTypeId(typeId) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -370,6 +392,8 @@ var questionService = {
     randomTMDP: getRandomQuestionByTypeIdMaxDiffMaxPlayers,
 
     WrandomTMDP: async (typeId, maxDiff, maxPlayers) => { return getWeightedRandomQuestionFromList(await listQuestionsByTypeIdMaxDiffMaxPlayers(typeId, maxDiff, maxPlayers)); },
+
+    WrandomTMDPG: async (typeId, maxDiff, maxPlayers, gender) => { return getWeightedRandomQuestionFromList(await listQuestionsByTypeIdMaxDiffMaxPlayersGender(typeId, maxDiff, maxPlayers, gender)); },
 
     randomT: getRandomQuestionByTypeId,
 

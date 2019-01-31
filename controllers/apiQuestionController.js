@@ -141,6 +141,22 @@ router.get('/wrandom/tmdp/:typeId/:maxDifficulty/:maxPlayers', async (req, res) 
     }
 });
 
+router.get('/wrandom/tmdpg/:typeId/:maxDifficulty/:maxPlayers/:gender', async (req, res) => {
+    try {
+        let typeId = parseInt(req.params.typeId);
+        let maxDifficulty = parseInt(req.params.maxDifficulty);
+        let maxPlayers = parseInt(req.params.maxPlayers);
+        let gender = parseInt(req.params.gender);
+
+        let question = await questionService.WrandomTMDPG(typeId, maxDifficulty, maxPlayers, gender);
+
+        res.send(question);
+    } catch (error) {
+        console.log(error);
+        res.send('error');
+    }
+});
+
 router.get('/list', async (req, res) => {
     try {
         res.send(await questionService.list());
