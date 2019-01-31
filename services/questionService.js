@@ -202,7 +202,7 @@ function getWeightedRandomQuestionFromList(lstQuestions) {
                 return question.nbPicked;
             });
 
-            let highest = Math.max.apply(null, weights);
+            let highest = Math.max.apply(null, weights) + 6;
 
             weights = lstQuestions.map(function (question) {
                 return highest - question.nbPicked;
