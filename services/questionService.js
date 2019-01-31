@@ -34,6 +34,12 @@ function beforeInsertQuestion(question) {
     return newQuestion;
 }
 
+function questionPicked(question) {
+    question.nbPicked += 1;
+
+    upsertQuestion(question);
+}
+
 function beforeReturnQuestion(question) {
     return new Promise(async (resolve, reject) => {
         question.type = await typeService.getTypeById(question.typeId);
@@ -55,6 +61,8 @@ function getQuestionById(questionId) {
         try {
             let question = await questionDao.findQuestionById(questionId);
 
+            questionPicked(question);
+
             resolve(beforeReturnQuestion(question));
         } catch (error) {
             reject(error);
@@ -67,6 +75,8 @@ function getQuestionByMongoId(questionMongoId) {
         try {
             let question = await questionDao.findQuestionByMongoId(questionMongoId);
 
+            questionPicked(question);
+
             resolve(beforeReturnQuestion(question));
         } catch (error) {
             reject(error);
@@ -78,8 +88,11 @@ function getRandomQuestion() {
     return new Promise(async (resolve, reject) => {
         try {
             let allQuestions = await listQuestions();
+            let question = allQuestions[Math.floor(Math.random() * allQuestions.length)];
 
-            resolve(beforeReturnQuestion(allQuestions[Math.floor(Math.random() * allQuestions.length)]));
+            questionPicked(question);
+
+            resolve(beforeReturnQuestion(question));
         } catch (error) {
             reject(error);
         }
@@ -91,7 +104,11 @@ function getRandomQuestionByMaxDiff(maxDiff) {
         try {
             let questions = await listQuestionsByMaxDiff(maxDiff);
 
-            resolve(beforeReturnQuestion(questions[Math.floor(Math.random() * questions.length)]));
+            let question = questions[Math.floor(Math.random() * questions.length)];
+
+            questionPicked(question);
+
+            resolve(beforeReturnQuestion(question));
         } catch (error) {
             reject(error);
         }
@@ -103,7 +120,11 @@ function getRandomQuestionByTypeIdMaxDiff(typeId, maxDiff) {
         try {
             let questions = await listQuestionsByTypeIdMaxDiff(typeId, maxDiff);
 
-            resolve(beforeReturnQuestion(questions[Math.floor(Math.random() * questions.length)]));
+            let question = questions[Math.floor(Math.random() * questions.length)];
+
+            questionPicked(question);
+
+            resolve(beforeReturnQuestion(question));
         } catch (error) {
             reject(error);
         }
@@ -115,25 +136,11 @@ function getRandomQuestionByTypeIdMaxDiffMaxPlayers(typeId, maxDiff, maxPlayers)
         try {
             let questions = await listQuestionsByTypeIdMaxDiffMaxPlayers(typeId, maxDiff, maxPlayers);
 
-            resolve(beforeReturnQuestion(questions[Math.floor(Math.random() * questions.length)]));
-        } catch (error) {
-            reject(error);
-        }
-    });
-}
+            let question = questions[Math.floor(Math.random() * questions.length)];
 
-function getWeightedRandomQuestionByTypeIdMaxDiffMaxPlayers(typeId, maxDiff, maxPlayers) {
-    return new Promise(async (resolve, reject) => {
-        try {
-            let questions = await listQuestionsByTypeIdMaxDiffMaxPlayers(typeId, maxDiff, maxPlayers);
+            questionPicked(question);
 
-            var weights = questions.map(function (question) {
-                return question.nbPicked;
-            });
-
-            var selected = weightedRandom(weights);
-
-            resolve(beforeReturnQuestion(questions[selected]));
+            resolve(beforeReturnQuestion(question));
         } catch (error) {
             reject(error);
         }
@@ -145,7 +152,11 @@ function getRandomQuestionByTypeId(typeId) {
         try {
             let typeQuestions = await listQuestionsByTypeId(typeId);
 
-            resolve(beforeReturnQuestion(typeQuestions[Math.floor(Math.random() * typeQuestions.length)]));
+            let question = typeQuestions[Math.floor(Math.random() * typeQuestions.length)];
+
+            questionPicked(question);
+
+            resolve(beforeReturnQuestion(question));
         } catch (error) {
             reject(error);
         }
@@ -157,7 +168,11 @@ function getRandomQuestionByDifficulty(difficulty) {
         try {
             let diffQuestions = await listQuestionsByDifficulty(difficulty)
 
-            resolve(beforeReturnQuestion(diffQuestions[Math.floor(Math.random() * diffQuestions.length)]));
+            let question = diffQuestions[Math.floor(Math.random() * diffQuestions.length)];
+
+            questionPicked(question);
+
+            resolve(beforeReturnQuestion(question));
         } catch (error) {
             reject(error);
         }
@@ -169,7 +184,37 @@ function getRandomQuestionByTypeIdDifficulty(typeId, difficulty) {
         try {
             let filteredQuestions = await listQuestionsByTypeIdDifficulty(typeId, difficulty);
 
-            resolve(beforeReturnQuestion(filteredQuestions[Math.floor(Math.random() * filteredQuestions.length)]));
+            let question = filteredQuestions[Math.floor(Math.random() * filteredQuestions.length)];
+
+            questionPicked(question);
+
+            resolve(beforeReturnQuestion(question));
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+function getWeightedRandomQuestionFromList(lstQuestions) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let weights = lstQuestions.map(function (question) {
+                return question.nbPicked;
+            });
+
+            let highest = Math.max.apply(null, weights);
+
+            weights = lstQuestions.map(function (question) {
+                return highest - question.nbPicked;
+            });
+
+            let question = lstQuestions[weightedRandom(weights)];
+
+            if (!question) question = lstQuestions[Math.floor(Math.random() * lstQuestions.length)];
+
+            questionPicked(question);
+
+            resolve(beforeReturnQuestion(question));
         } catch (error) {
             reject(error);
         }
@@ -312,19 +357,31 @@ var questionService = {
 
     random: getRandomQuestion,
 
+    Wrandom: async () => { return getWeightedRandomQuestionFromList(await listQuestions()); },
+
     randomMD: getRandomQuestionByMaxDiff,
+
+    WrandomMD: async (maxDiff) => { return getWeightedRandomQuestionFromList(await listQuestionsByMaxDiff(maxDiff)); },
 
     randomTMD: getRandomQuestionByTypeIdMaxDiff,
 
+    WrandomTMD: async (typeId, maxDiff) => { return getWeightedRandomQuestionFromList(await listQuestionsByTypeIdMaxDiff(typeId, maxDiff)); },
+
     randomTMDP: getRandomQuestionByTypeIdMaxDiffMaxPlayers,
 
-    WrandomTMDP: getWeightedRandomQuestionByTypeIdMaxDiffMaxPlayers,
+    WrandomTMDP: async (typeId, maxDiff, maxPlayers) => { return getWeightedRandomQuestionFromList(await listQuestionsByTypeIdMaxDiffMaxPlayers(typeId, maxDiff, maxPlayers)); },
 
     randomT: getRandomQuestionByTypeId,
 
+    WrandomT: async (typeId) => { return getWeightedRandomQuestionFromList(await listQuestionsByTypeId(typeId)); },
+
     randomD: getRandomQuestionByDifficulty,
 
+    WrandomD: async (difficulty) => { return getWeightedRandomQuestionFromList(await listQuestionsByDifficulty(difficulty)); },
+
     randomTD: getRandomQuestionByTypeIdDifficulty,
+
+    WrandomTD: async (typeId, difficulty) => { return getWeightedRandomQuestionFromList(await listQuestionsByTypeIdDifficulty(typeId, difficulty)); },
 
     upsertQuestion: upsertQuestion,
 

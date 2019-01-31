@@ -7,11 +7,7 @@ router.get('/id/:questionId', async (req, res) => {
 
         let question = await questionService.getQuestionById(questionId);
 
-        question.nbPicked += 1;
-
         res.send(question);
-
-        questionService.upsertQuestion(question);
     } catch (error) {
         console.log(error);
         res.send('error');
@@ -28,7 +24,7 @@ router.get('/done/:questionId', async (req, res) => {
 
         questionService.upsertQuestion(question);
 
-        res.send('ok');
+        res.send({ 'done': 'ok' });
     } catch (error) {
         console.log(error);
         res.send('error');
@@ -39,11 +35,7 @@ router.get('/random', async (req, res) => {
     try {
         let question = await questionService.random();
 
-        question.nbPicked += 1;
-
         res.send(question);
-
-        questionService.upsertQuestion(question);
     } catch (error) {
         console.log(error);
         res.send('error');
@@ -56,11 +48,7 @@ router.get('/random/md/:maxDiff', async (req, res) => {
 
         let question = await questionService.randomMD(maxDiff);
 
-        question.nbPicked += 1;
-
         res.send(question);
-
-        questionService.upsertQuestion(question);
     } catch (error) {
         console.log(error);
         res.send('error');
@@ -73,11 +61,7 @@ router.get('/random/t/:typeId', async (req, res) => {
 
         let question = await questionService.randomT(typeId);
 
-        question.nbPicked += 1;
-
         res.send(question);
-
-        questionService.upsertQuestion(question);
     } catch (error) {
         console.log(error);
         res.send('error');
@@ -91,11 +75,7 @@ router.get('/random/d/:difficulty', async (req, res) => {
 
         let question = await questionService.randomD(difficulty);
 
-        question.nbPicked += 1;
-
         res.send(question);
-
-        questionService.upsertQuestion(question);
     } catch (error) {
         console.log(error);
         res.send('error');
@@ -110,11 +90,7 @@ router.get('/random/td/:typeId/:difficulty', async (req, res) => {
 
         let question = await questionService.randomTD(typeId, difficulty);
 
-        question.nbPicked += 1;
-
         res.send(question);
-
-        questionService.upsertQuestion(question);
     } catch (error) {
         console.log(error);
         res.send('error');
@@ -128,11 +104,7 @@ router.get('/random/tmd/:typeId/:maxDifficulty', async (req, res) => {
 
         let question = await questionService.randomTMD(maxDifficulty, typeId);
 
-        question.nbPicked += 1;
-
         res.send(question);
-
-        questionService.upsertQuestion(question);
     } catch (error) {
         console.log(error);
         res.send('error');
@@ -147,11 +119,22 @@ router.get('/random/tmdp/:typeId/:maxDifficulty/:maxPlayers', async (req, res) =
 
         let question = await questionService.randomTMDP(typeId, maxDifficulty, maxPlayers);
 
-        question.nbPicked += 1;
+        res.send(question);
+    } catch (error) {
+        console.log(error);
+        res.send('error');
+    }
+});
+
+router.get('/wrandom/tmdp/:typeId/:maxDifficulty/:maxPlayers', async (req, res) => {
+    try {
+        let typeId = parseInt(req.params.typeId);
+        let maxDifficulty = parseInt(req.params.maxDifficulty);
+        let maxPlayers = parseInt(req.params.maxPlayers);
+
+        let question = await questionService.WrandomTMDP(typeId, maxDifficulty, maxPlayers);
 
         res.send(question);
-
-        questionService.upsertQuestion(question);
     } catch (error) {
         console.log(error);
         res.send('error');
