@@ -1,6 +1,7 @@
 const questionDao = require('../daos/questionDao');
 const typeService = require('./typeService');
 const uuidv1 = require('uuid/v1');
+const weightedRandom = require('weighted-random');
 
 function searchMany(source, find) {
     var result = [];
@@ -115,6 +116,24 @@ function getRandomQuestionByTypeIdMaxDiffMaxPlayers(typeId, maxDiff, maxPlayers)
             let questions = await listQuestionsByTypeIdMaxDiffMaxPlayers(typeId, maxDiff, maxPlayers);
 
             resolve(beforeReturnQuestion(questions[Math.floor(Math.random() * questions.length)]));
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+function getWeightedRandomQuestionByTypeIdMaxDiffMaxPlayers(typeId, maxDiff, maxPlayers) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let questions = await listQuestionsByTypeIdMaxDiffMaxPlayers(typeId, maxDiff, maxPlayers);
+
+            var weights = questions.map(function (question) {
+                return question.nbPicked;
+            });
+
+            var selected = weightedRandom(weights);
+
+            resolve(beforeReturnQuestion(questions[selected]));
         } catch (error) {
             reject(error);
         }
@@ -298,6 +317,8 @@ var questionService = {
     randomTMD: getRandomQuestionByTypeIdMaxDiff,
 
     randomTMDP: getRandomQuestionByTypeIdMaxDiffMaxPlayers,
+
+    WrandomTMDP: getWeightedRandomQuestionByTypeIdMaxDiffMaxPlayers,
 
     randomT: getRandomQuestionByTypeId,
 
