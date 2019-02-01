@@ -122,17 +122,17 @@ function listTypesW() {
 var typeService = {
     getTypeById: getTypeById,
 
-    getRandomType: getRandomType,
+    random: getRandomType,
 
-    getRandomTypeQ: getRandomTypeQ,
+    randomQ: getRandomTypeQ,
 
-    getRandomTypeW: getRandomTypeW,
+    randomW: getRandomTypeW,
 
-    listTypes: listTypes,
+    list: listTypes,
 
-    listTypesQ: listTypesQ,
+    listQ: listTypesQ,
 
-    listTypesW: listTypesW
+    listW: listTypesW
 }
 
 module.exports = typeService;
