@@ -257,7 +257,7 @@ function listQuestionsByParams(params) {
                 return res.every(val => val == true);
             });
 
-            resolve(beforeReturnLstQuestions(allQuestions));
+            resolve(beforeReturnLstQuestions(questions));
         } catch (error) {
             reject(error);
         }
