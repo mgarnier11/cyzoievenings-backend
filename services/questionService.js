@@ -206,13 +206,13 @@ function getRandomQuestionByTypeIdDifficulty(typeId, difficulty) {
 function getWeightedRandomQuestionFromList(lstQuestions) {
     return new Promise(async (resolve, reject) => {
         try {
-            let weights = lstQuestions.map(function (question) {
+            let weights = lstQuestions.map(function(question) {
                 return question.nbPicked;
             });
 
             let highest = Math.max.apply(null, weights) + 6;
 
-            weights = lstQuestions.map(function (question) {
+            weights = lstQuestions.map(function(question) {
                 return highest - question.nbPicked;
             });
 
@@ -234,6 +234,30 @@ function upsertQuestion(newQuestion) {
         try {
             var result = await questionDao.upsertQuestion(beforeInsertQuestion(newQuestion));
             resolve(result);
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+function listQuestionsByParams(params) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let allQuestions = await listQuestions();
+
+            let questions = allQuestions.filter(question => {
+                let res = [];
+                params.forEach(param => {
+                    if (param.equal < 0 && question[param.obj] <= param.value) res.push(true);
+                    else if (param.equal > 0 && question[param.obj] >= param.value) res.push(true);
+                    else if (param.equal == 0 && question[param.obj] == param.value) res.push(true);
+                    else res.push(false);
+                });
+
+                return res.every(val => val == true);
+            });
+
+            resolve(beforeReturnLstQuestions(allQuestions));
         } catch (error) {
             reject(error);
         }
@@ -381,47 +405,93 @@ var questionService = {
 
     Wrandom: async () => { return getWeightedRandomQuestionFromList(await listQuestions()); },
 
-    randomMD: getRandomQuestionByMaxDiff,
+    WrandomT: async (typeId) => {
+        return getWeightedRandomQuestionFromList(await listQuestionsByParams([
+            { obj: 'typeId', value: typeId, equal: 0 },
+        ]));
+    },
+
+    WrandomD: async (difficulty) => {
+        return getWeightedRandomQuestionFromList(await listQuestionsByParams([
+            { obj: 'difficulty', value: maxDiff, equal: 0 }
+        ]));
+    },
+
+    WrandomTD: async (typeId, difficulty) => {
+        return getWeightedRandomQuestionFromList(await listQuestionsByParams([
+            { obj: 'typeId', value: typeId, equal: 0 },
+            { obj: 'difficulty', value: maxDiff, equal: 0 }
+        ]));
+    },
 
     WrandomMD: async (maxDiff) => { return getWeightedRandomQuestionFromList(await listQuestionsByMaxDiff(maxDiff)); },
 
-    randomTMD: getRandomQuestionByTypeIdMaxDiff,
+    WrandomTMD: async (typeId, maxDiff) => {
+        return getWeightedRandomQuestionFromList(await listQuestionsByParams([
+            { obj: 'typeId', value: typeId, equal: 0 },
+            { obj: 'difficulty', value: maxDiff, equal: -1 }
+        ]));
+    },
 
-    WrandomTMD: async (typeId, maxDiff) => { return getWeightedRandomQuestionFromList(await listQuestionsByTypeIdMaxDiff(typeId, maxDiff)); },
+    WrandomTMDP: async (typeId, maxDiff, maxPlayers) => {
+        return getWeightedRandomQuestionFromList(await listQuestionsByParams([
+            { obj: 'typeId', value: typeId, equal: 0 },
+            { obj: 'difficulty', value: maxDiff, equal: -1 },
+            { obj: 'nbPlayers', value: maxPlayers, equal: -1 }
+        ]));
+    },
 
-    randomTMDP: getRandomQuestionByTypeIdMaxDiffMaxPlayers,
-
-    WrandomTMDP: async (typeId, maxDiff, maxPlayers) => { return getWeightedRandomQuestionFromList(await listQuestionsByTypeIdMaxDiffMaxPlayers(typeId, maxDiff, maxPlayers)); },
-
-    WrandomTMDPG: async (typeId, maxDiff, maxPlayers, gender) => { return getWeightedRandomQuestionFromList(await listQuestionsByTypeIdMaxDiffMaxPlayersGender(typeId, maxDiff, maxPlayers, gender)); },
-
-    randomT: getRandomQuestionByTypeId,
-
-    WrandomT: async (typeId) => { return getWeightedRandomQuestionFromList(await listQuestionsByTypeId(typeId)); },
-
-    randomD: getRandomQuestionByDifficulty,
-
-    WrandomD: async (difficulty) => { return getWeightedRandomQuestionFromList(await listQuestionsByDifficulty(difficulty)); },
-
-    randomTD: getRandomQuestionByTypeIdDifficulty,
-
-    WrandomTD: async (typeId, difficulty) => { return getWeightedRandomQuestionFromList(await listQuestionsByTypeIdDifficulty(typeId, difficulty)); },
+    WrandomTMDPG: async (typeId, maxDiff, maxPlayers, gender) => {
+        return getWeightedRandomQuestionFromList(await listQuestionsByParams([
+            { obj: 'typeId', value: typeId, equal: 0 },
+            { obj: 'difficulty', value: maxDiff, equal: -1 },
+            { obj: 'nbPlayers', value: maxPlayers, equal: -1 }
+        ]));
+    },
 
     upsertQuestion: upsertQuestion,
 
     list: listQuestions,
 
-    listT: listQuestionsByTypeId,
+    listT: async (typeId) => {
+        return await listQuestionsByParams([
+            { obj: 'typeId', value: typeId, equal: 0 },
+        ]);
+    },
 
-    listMD: listQuestionsByMaxDiff,
+    listMD: async (maxDiff) => {
+        return await listQuestionsByParams([
+            { obj: 'difficulty', value: maxDiff, equal: -1 }
+        ]);
+    },
 
-    listTMD: listQuestionsByTypeIdMaxDiff,
+    listTMD: async (typeId, maxDiff) => {
+        return await listQuestionsByParams([
+            { obj: 'typeId', value: typeId, equal: 0 },
+            { obj: 'difficulty', value: maxDiff, equal: -1 }
+        ]);
+    },
 
-    listTMDP: listQuestionsByTypeIdMaxDiffMaxPlayers,
+    listTMDP: async (typeId, maxDiff, maxPlayers) => {
+        return await listQuestionsByParams([
+            { obj: 'typeId', value: typeId, equal: 0 },
+            { obj: 'difficulty', value: maxDiff, equal: -1 },
+            { obj: 'nbPlayers', value: maxPlayers, equal: -1 }
+        ]);
+    },
 
-    listD: listQuestionsByDifficulty,
+    listD: async (difficulty) => {
+        return await listQuestionsByParams([
+            { obj: 'difficulty', value: difficulty, equal: 0 }
+        ]);
+    },
 
-    listTD: listQuestionsByTypeIdDifficulty,
+    listTD: async (typeId, difficulty) => {
+        return await listQuestionsByParams([
+            { obj: 'typeId', value: typeId, equal: 0 },
+            { obj: 'difficulty', value: difficulty, equal: 0 }
+        ]);
+    },
 
     deleteQuestion: deleteQuestion,
 
