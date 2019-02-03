@@ -11,8 +11,8 @@ const myDbUrl = (process.env.DB ? process.env.DB : 'mongodb://localhost:27017');
 const myDbName = (process.env.DB_NAME ? process.env.DB_NAME : 'game-database');
 const myPort = (process.env.PORT ? process.env.PORT : 3000);
 
-const apiQuestionController = require('./controllers/apiQuestionController');
-const apiTypeController = require('./controllers/apiTypeController');
+const apiQuestionController = require('./controllers/questionController');
+const apiTypeController = require('./controllers/typeController');
 
 const questionSocketController = require('./socketControllers/questionSocketController');
 const typeSocketController = require('./socketControllers/typeSocketController');

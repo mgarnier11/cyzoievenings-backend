@@ -124,13 +124,13 @@ function getRandomQuestionFromList(lstQuestions) {
 function getWeightedRandomQuestionFromList(lstQuestions) {
     return new Promise(async (resolve, reject) => {
         try {
-            let weights = lstQuestions.map(function(question) {
+            let weights = lstQuestions.map(function (question) {
                 return question.nbPicked;
             });
 
             let highest = Math.max.apply(null, weights) + 6;
 
-            weights = lstQuestions.map(function(question) {
+            weights = lstQuestions.map(function (question) {
                 return highest - question.nbPicked;
             });
 
