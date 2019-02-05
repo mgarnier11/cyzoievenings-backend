@@ -2,11 +2,11 @@ const typeService = require('../services/typeService');
 
 function typeSocketController(socket, io) {
     socket.on('getListTypes', async () => {
-        socket.emit('returnListTypes', await typeService.listTypes());
+        socket.emit('returnListTypes', await typeService.list());
     });
 
     socket.on('getRandomType', async () => {
-        socket.emit('returnType', await typeService.getRandomType());
+        socket.emit('returnType', await typeService.random());
     });
 
     socket.on('getTypeById', async (typeId) => {
