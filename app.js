@@ -9,13 +9,14 @@ const dotenv = require('dotenv').config();//you need a .env file with db infos i
 
 const myDbUrl = (process.env.DB ? process.env.DB : 'mongodb://localhost:27017');
 const myDbName = (process.env.DB_NAME ? process.env.DB_NAME : 'game-database');
-const myPort = (process.env.PORT ? process.env.PORT : 3000);
+const myPort = (process.env.PORT ? process.env.PORT : 3001);
 
 const apiQuestionController = require('./controllers/questionController');
 const apiTypeController = require('./controllers/typeController');
 
 const questionSocketController = require('./socketControllers/questionSocketController');
 const typeSocketController = require('./socketControllers/typeSocketController');
+const gameSocketController = require('./socketControllers/gameSocketController');
 
 
 
@@ -64,6 +65,7 @@ mongoClient.connect(myDbUrl, { useNewUrlParser: true }, async (err, db) => {
         console.log('an user connected');
         questionSocketController(socket, io);
         typeSocketController(socket, io);
+        gameSocketController(socket, io);
     })
 
 	/**

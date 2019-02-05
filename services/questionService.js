@@ -110,7 +110,7 @@ function getRandomQuestion() {
 function getRandomQuestionFromList(lstQuestions) {
     return new Promise(async (resolve, reject) => {
         try {
-            let question = lstQuestions[Math.floor(Math.random() * allQuestions.length)];
+            let question = lstQuestions[Math.floor(Math.random() * lstQuestions.length)];
 
             questionPicked(question);
 
