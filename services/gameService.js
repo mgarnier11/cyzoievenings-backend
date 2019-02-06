@@ -32,16 +32,16 @@ function beforeInsertGame(game) {
     newGame.maxDifficulty = (game.maxDifficulty || 5);
     newGame.nbTurns = (game.nbTurns || 50);
 
-    newGame.actualPlayer = (game.actualPlayer || null);
-    newGame.actualType = (game.actualType || null);
-    newGame.actualQuestion = (game.actualQuestion || null);
+    newGame.actualPlayerId = (game.actualPlayerId || 0);
+    newGame.actualTypeId = (game.actualTypeId || 0);
+    newGame.actualQuestionId = (game.actualQuestionId || null);
     newGame.processedQuestion = (game.processedQuestion || null);
 
     newGame.playersOrder = (game.playersOrder || []);
 
     if (!game.playersOrder) {
         for (let i = 0; i < game.nbTurns; i++) {
-            newGame.playersOrder.push(game.lstPlayers[i % game.lstPlayers.length]);
+            newGame.playersOrder.push(game.lstPlayers[i % game.lstPlayers.length].id);
         }
 
         newGame.playersOrder = shuffle(newGame.playersOrder);
@@ -123,7 +123,7 @@ function processQuestion(question, game) {
     return new Promise(async (resolve, reject) => {
         try {
             let lstPlayers = shuffle(game.lstPlayers.filter(player => {
-                return player.id != game.actualPlayer.id;
+                return player.id != game.actualPlayerId;
             }));
 
             indexes(question.text, findM).forEach(strike => {

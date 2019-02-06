@@ -5,48 +5,54 @@ const typeService = require('../services/typeService');
 
 
 function gameSocketController(socket, io) {
-    async function onNextQuestion(gameId, cb) {
-        let game = await gameService.getGameById(gameId);
+    async function onNextQuestion(cb) {
+        try {
+            let game = await gameService.getGameById(socket.gameId);
 
-        game.actualPlayer = game.playersOrder.shift();
+            game.actualPlayerId = game.playersOrder.shift();
+            game.actualTypeId = (await typeService.randomW()).id;
 
-        game.actualType = await typeService.randomW();
+            let i = game.lstPlayers.findIndex(p => p.id == game.actualPlayerId);
+            game.lstPlayers[i].nbQuestions++;
 
-        if (game.actualPlayer && game.actualType) {
-            game.actualQuestion = await questionService.randomTMDPG(game.actualType.id, game.maxDifficulty, game.lstPlayers.length - 1, game.actualPlayer.gender);
+            if (game.actualPlayerId > -1 && game.actualTypeId > -1) {
+                let question = await questionService.randomTMDP(game.actualTypeId, game.maxDifficulty, game.lstPlayers.length - 1);
 
-            game.processedQuestion = await gameService.processQuestion(game.actualQuestion, game);
+                game.actualQuestionId = question.id
 
-            await gameService.upsertGame(game);
+                game.processedQuestion = await gameService.processQuestion(question, game);
 
-            io.to(game.id).emit('returnGame', game);
-            //socket.emit('returnGame', game);
-            if (typeof cb === 'function') cb(game);
+                await gameService.upsertGame(game);
+
+                io.to(game.id).emit('returnGame', game);
+
+                //socket.emit('returnGame', game);
+
+                if (typeof cb === 'function') cb(game);
+            }
+        } catch (error) {
+            socket.emit('errorGame', error);
         }
     }
 
     async function onGetGameById(gameId, cb) {
-        let game = await gameService.getGameById(gameId);
+        try {
+            let game = await gameService.getGameById(gameId);
 
-        if (game) {
-            socket.join(game.id);
+            if (game) {
+                socket.join(game.id);
 
-            socket.gameId = game.id;
+                socket.gameId = game.id;
 
-            socket.emit('returnGame', game);
-
-            if (typeof cb === 'function') cb(game);
+                if (game.processedQuestion) {
+                    socket.emit('returnGame', game);
+                    if (typeof cb === 'function') cb(game);
+                }
+                else onNextQuestion(gameId, cb);
+            }
+        } catch (error) {
+            socket.emit('errorGame', error);
         }
-    }
-
-    async function onActualQuestion(gameId, cb) {
-        let game = await gameService.getGameById(gameId);
-
-        if (game.processedQuestion) {
-            socket.emit('returnGame', game);
-            if (typeof cb === 'function') cb(game);
-        }
-        else onNextQuestion(gameId, cb);
     }
 
     async function onCreateGame(game, cb) {
@@ -65,11 +71,28 @@ function gameSocketController(socket, io) {
         }
     }
 
+    async function onQuestionDone(done, cb) {
+        try {
+            let game = await gameService.getGameById(socket.gameId);
+            let i = game.lstPlayers.findIndex(p => p.id == game.actualPlayerId);
+
+            if (done) {
+                game.lstPlayers[i].nbDone++;
+            } else {
+                game.lstPlayers[i].nbDrinked += game.processedQuestion.toDrink;
+            }
+
+            await gameService.upsertGame(game);
+        } catch (error) {
+            socket.emit('errorGame', error);
+        }
+    }
+
     socket.on('getGameById', onGetGameById);
 
-    socket.on('actualQuestion', onActualQuestion);
-
     socket.on('nextQuestion', onNextQuestion);
+
+    socket.on('questionDone', onQuestionDone);
 
     socket.on('createGame', onCreateGame);
 };
