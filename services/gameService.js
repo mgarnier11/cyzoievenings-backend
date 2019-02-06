@@ -1,23 +1,75 @@
+const utils = require('../utils');
+
 const gameDao = require('../daos/gameDao');
 
 let findM = '{PlayerM}';
 let findF = '{PlayerF}';
 let findP = '{Player}';
 
-/**
- * Shuffles array in place.
- * @param {Array} a items An array containing the items.
- */
-function shuffle(a) {
-    var j, x, i;
-    for (i = a.length - 1; i > 0; i--) {
-        j = Math.floor(Math.random() * (i + 1));
-        x = a[i];
-        a[i] = a[j];
-        a[j] = x;
-    }
-    return a;
+
+
+function processQuestion(question, game) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let lstPlayers = utils.shuffle(game.lstPlayers.filter(player => {
+                return player.id != game.actualPlayerId;
+            }));
+
+            utils.indexes(question.text, findM).forEach(strike => {
+                let p = getPlayerByGenderFromLst(lstPlayers, 0);
+                if (p) {
+                    question.text = question.text.replace(findM, p.name);
+                    lstPlayers = deletePlayerFromLst(lstPlayers, p.id);
+                }
+            });
+
+            utils.indexes(question.text, findF).forEach(strike => {
+                let p = getPlayerByGenderFromLst(lstPlayers, 1);
+                if (p) {
+                    question.text = question.text.replace(findF, p.name);
+                    lstPlayers = deletePlayerFromLst(lstPlayers, p.id);
+                }
+            });
+
+            utils.indexes(question.text, findP).forEach(strike => {
+                let p = getPlayerByGenderFromLst(lstPlayers, -1);
+                if (p) {
+                    question.text = question.text.replace(findP, p.name);
+                    lstPlayers = deletePlayerFromLst(lstPlayers, p.id);
+                }
+            });
+
+            question.toDrink = parseInt(getRndDrinks());
+
+            resolve(question);
+
+            function getRndDrinks() {
+                let rnd = Math.floor(Math.random() * game.nbDrinksMax) + game.nbDrinksMin;
+
+                let eff = question.nbDone * 100 / question.nbPicked;
+
+                return rnd * (1 + (question.difficulty / 10)) * (1 + (eff / 20));
+            }
+        } catch (error) {
+            reject(error);
+        }
+    });
 }
+
+function getPlayerByGenderFromLst(lstPlayers, gender) {
+    if (gender == 0 && gender == 1) return lstPlayers.find(p => p.gender == gender);
+    else return lstPlayers[0];
+}
+
+function deletePlayerFromLst(lstPlayers, playerId) {
+    var index = lstPlayers.findIndex(player => player.id === playerId);
+    if (index > -1) {
+        lstPlayers.splice(index, 1);
+    }
+
+    return lstPlayers;
+}
+
 
 function beforeInsertGame(game) {
     let newGame = {};
@@ -118,81 +170,6 @@ function deleteGameById(gameId) {
         }
     });
 }
-
-function processQuestion(question, game) {
-    return new Promise(async (resolve, reject) => {
-        try {
-            let lstPlayers = shuffle(game.lstPlayers.filter(player => {
-                return player.id != game.actualPlayerId;
-            }));
-
-            indexes(question.text, findM).forEach(strike => {
-                let p = getPlayerByGenderFromLst(lstPlayers, 0);
-                if (p) {
-                    question.text = question.text.replace(findM, p.name);
-                    lstPlayers = deletePlayerFromLst(lstPlayers, p.id);
-                }
-            });
-
-            indexes(question.text, findF).forEach(strike => {
-                let p = getPlayerByGenderFromLst(lstPlayers, 1);
-                if (p) {
-                    question.text = question.text.replace(findF, p.name);
-                    lstPlayers = deletePlayerFromLst(lstPlayers, p.id);
-                }
-            });
-
-            indexes(question.text, findP).forEach(strike => {
-                let p = getPlayerByGenderFromLst(lstPlayers, -1);
-                if (p) {
-                    question.text = question.text.replace(findP, p.name);
-                    lstPlayers = deletePlayerFromLst(lstPlayers, p.id);
-                }
-            });
-
-            question.toDrink = parseInt(getRndDrinks());
-
-            resolve(question);
-
-            function getRndDrinks() {
-                let rnd = Math.floor(Math.random() * game.nbDrinksMax) + game.nbDrinksMin;
-
-                let eff = question.nbDone * 100 / question.nbPicked;
-
-                return rnd * (1 + (question.difficulty / 10)) * (1 + (eff / 20));
-            }
-        } catch (error) {
-            reject(error);
-        }
-    });
-}
-
-function getPlayerByGenderFromLst(lstPlayers, gender) {
-    if (gender == 0 && gender == 1) return lstPlayers.find(p => p.gender == gender);
-    else return lstPlayers[0];
-}
-
-function indexes(source, find) {
-    var result = [];
-    for (i = 0; i < source.length; ++i) {
-        // If you want to search case insensitive use 
-        // if (source.substring(i, i + find.length).toLowerCase() == find) {
-        if (source.substring(i, i + find.length) == find) {
-            result.push(i);
-        }
-    }
-    return result;
-}
-
-function deletePlayerFromLst(lstPlayers, playerId) {
-    var index = lstPlayers.findIndex(player => player.id === playerId);
-    if (index > -1) {
-        lstPlayers.splice(index, 1);
-    }
-
-    return lstPlayers;
-}
-
 
 var gameService = {
     getGameById: getGameById,

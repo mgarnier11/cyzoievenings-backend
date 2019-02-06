@@ -1,24 +1,14 @@
+const utils = require('../utils');
+
 const questionDao = require('../daos/questionDao');
 const typeService = require('./typeService');
 const uuidv1 = require('uuid/v1');
 const weightedRandom = require('weighted-random');
 
-function searchMany(source, find) {
-    var result = [];
-    for (i = 0; i < source.length; ++i) {
-        // If you want to search case insensitive use 
-        // if (source.substring(i, i + find.length).toLowerCase() == find) {
-        if (source.substring(i, i + find.length) == find) {
-            result.push(i);
-        }
-    }
-    return result;
-}
-
 function beforeInsertQuestion(question) {
-    let playerPos = searchMany(question.text, '{Player}');
-    let playerMPos = searchMany(question.text, '{PlayerF}');
-    let playerFPos = searchMany(question.text, '{PlayerM}');
+    let playerPos = utils.indexes(question.text, '{Player}');
+    let playerMPos = utils.indexes(question.text, '{PlayerF}');
+    let playerFPos = utils.indexes(question.text, '{PlayerM}');
 
     let newQuestion = {};
 
