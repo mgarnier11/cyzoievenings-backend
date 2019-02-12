@@ -155,11 +155,27 @@ function listQuestionsByParams(params) {
 
             let questions = allQuestions.filter(question => {
                 let res = [];
+
                 params.forEach(param => {
-                    if (param.equal < 0 && question[param.obj] <= param.value) res.push(true);
-                    else if (param.equal > 0 && question[param.obj] >= param.value) res.push(true);
-                    else if (param.equal == 0 && question[param.obj] == param.value) res.push(true);
-                    else res.push(false);
+                    if (param.value.constructor === Array) {
+                        let tmpRes = [];
+
+                        param.value.forEach(value => {
+                            if (param.equal < 0 && question[param.obj] <= value) tmpRes.push(true);
+                            else if (param.equal > 0 && question[param.obj] >= value) tmpRes.push(true);
+                            else if (param.equal == 0 && question[param.obj] == value) tmpRes.push(true);
+                            else tmpRes.push(false);
+                        });
+
+                        res.push(tmpRes.some(val => val == true));
+                    } else {
+
+                        if (param.equal < 0 && question[param.obj] <= param.value) res.push(true);
+                        else if (param.equal > 0 && question[param.obj] >= param.value) res.push(true);
+                        else if (param.equal == 0 && question[param.obj] == param.value) res.push(true);
+                        else res.push(false);
+
+                    }
                 });
 
                 return res.every(val => val == true);
@@ -259,7 +275,8 @@ var questionService = {
         return getRandomQuestionFromList(await listQuestionsByParams([
             { obj: 'typeId', value: typeId, equal: 0 },
             { obj: 'difficulty', value: maxDiff, equal: -1 },
-            { obj: 'nbPlayers', value: maxPlayers, equal: -1 }
+            { obj: 'nbPlayers', value: maxPlayers, equal: -1 },
+            { obj: 'gender', value: [-1, gender], equal: 0 }
         ]));
     },
 
@@ -309,7 +326,8 @@ var questionService = {
         return getWeightedRandomQuestionFromList(await listQuestionsByParams([
             { obj: 'typeId', value: typeId, equal: 0 },
             { obj: 'difficulty', value: maxDiff, equal: -1 },
-            { obj: 'nbPlayers', value: maxPlayers, equal: -1 }
+            { obj: 'nbPlayers', value: maxPlayers, equal: -1 },
+            { obj: 'gender', value: [-1, gender], equal: 0 }
         ]));
     },
 
