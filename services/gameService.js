@@ -96,7 +96,7 @@ function beforeInsertGame(game) {
             newGame.playersOrder.push(game.lstPlayers[i % game.lstPlayers.length].id);
         }
 
-        newGame.playersOrder = shuffle(newGame.playersOrder);
+        newGame.playersOrder = utils.shuffle(newGame.playersOrder);
     }
 
     return newGame;
