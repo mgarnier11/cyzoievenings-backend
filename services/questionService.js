@@ -222,6 +222,25 @@ function deleteQuestionById(questionId) {
     });
 }
 
+function clearStats() {
+    return new Promise(async (resolve, reject) => {
+        try {
+            var questions = await questionDao.listQuestions();
+
+            for (question of questions) {
+                question.nbPicked = 0;
+                question.nbDone = 0;
+
+                await questionDao.upsertQuestion(question);
+            }
+
+            resolve('ok');
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
 var questionService = {
     getQuestionById: getQuestionById,
 
@@ -378,6 +397,8 @@ var questionService = {
     deleteQuestion: deleteQuestion,
 
     deleteQuestionById: deleteQuestionById,
+
+    clearStats: clearStats
 }
 
 module.exports = questionService;
