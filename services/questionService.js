@@ -112,16 +112,18 @@ function getRandomQuestionFromList(lstQuestions) {
 }
 
 function getWeightedRandomQuestionFromList(lstQuestions) {
+    const diff = 3;
     return new Promise(async (resolve, reject) => {
         try {
             let weights = lstQuestions.map(function (question) {
                 return question.nbPicked;
             });
 
-            let highest = Math.max.apply(null, weights) + 6;
+            let lowest = Math.min.apply(null, weights);
 
             weights = lstQuestions.map(function (question) {
-                return highest - question.nbPicked;
+                if (question.nbPicked - diff >= lowest) return 0;
+                else return lowest + diff - question.nbPicked;
             });
 
             let question = lstQuestions[weightedRandom(weights)];
@@ -291,6 +293,7 @@ var questionService = {
     },
 
     randomTMDPG: async (typeId, maxDiff, maxPlayers, gender) => {
+        gender = (gender || -1);
         return getRandomQuestionFromList(await listQuestionsByParams([
             { obj: 'typeId', value: typeId, equal: 0 },
             { obj: 'difficulty', value: maxDiff, equal: -1 },
