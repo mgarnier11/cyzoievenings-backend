@@ -10,7 +10,8 @@ router.get('/done/:questionId', async (req, res) => {
 
         let question = await questionService.getQuestionById(questionId);
 
-        question.nbDone += 1;
+        question.nbPicked--;
+        question.nbDone++;
 
         questionService.upsertQuestion(question);
 
