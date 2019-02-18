@@ -45,6 +45,18 @@ function getRandomTypeQ() {
     });
 }
 
+function get(input) {
+    var array = [];
+    for (var item of input) {
+        if (item) {
+            for (let i = 0; i < item.weight; i++) {
+                array.push(item);
+            }
+        }
+    }
+    return array[Math.floor(Math.random() * array.length)];
+}
+
 function getRandomTypeW() {
     return new Promise(async (resolve, reject) => {
         try {
@@ -55,16 +67,23 @@ function getRandomTypeW() {
             reject(error);
         }
     });
+}
 
-    function get(input) {
-        var array = [];
-        for (var item of input) {
-            for (let i = 0; i < item.weight; i++) {
-                array.push(item);
-            }
+function getRandomTypeWG(group) {
+    group = !!parseInt(group);
+    return new Promise(async (resolve, reject) => {
+        try {
+            let nTypes = await listTypesW();
+
+            nTypes = nTypes.map(t => {
+                if (t.group == group || (t.group == undefined && group == false)) return t;
+            });
+
+            resolve(get(nTypes));
+        } catch (error) {
+            reject(error);
         }
-        return array[Math.floor(Math.random() * array.length)];
-    }
+    });
 }
 
 function listTypes() {
@@ -127,6 +146,8 @@ var typeService = {
     randomQ: getRandomTypeQ,
 
     randomW: getRandomTypeW,
+
+    randomWG: getRandomTypeWG,
 
     list: listTypes,
 
