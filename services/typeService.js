@@ -3,11 +3,11 @@ const questionDao = require('../daos/questionDao');
 const types = [
     { id: 1, value: "Vérité" },
     { id: 2, value: "Theme" },
-    { id: 3, value: "Action de groupe" },
+    { id: 3, value: "Action de groupe", group: true },
     { id: 4, value: "As-tu déja" },
     { id: 5, value: "Minijeu" },
     { id: 6, value: "Action" },
-    { id: 7, value: "Vérité de groupe" },
+    { id: 7, value: "Vérité de groupe", group: true },
     { id: 8, value: "Tu préfères" },
 ]
 
