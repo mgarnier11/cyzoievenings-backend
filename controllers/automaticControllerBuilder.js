@@ -33,6 +33,7 @@ function automaticControllerBuiler(router, service) {
 
         router.get('/' + method + argsStr, async (req, res) => {
             try {
+                console.time(method + 'Timer');
                 let params = [];
 
                 args.forEach(arg => {
@@ -40,9 +41,12 @@ function automaticControllerBuiler(router, service) {
                 });
 
                 res.send(await service[method].apply(method, params));
+
+                console.timeEnd(method + 'Timer');
             } catch (error) {
                 console.log(error);
                 res.send('error');
+                console.timeEnd(method + 'Timer');
             }
         });
     });
