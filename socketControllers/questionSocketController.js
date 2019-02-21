@@ -3,7 +3,7 @@ const typeService = require('../services/typeService');
 
 function questionSocketController(socket, io) {
     socket.on('getListQuestions', async () => {
-        socket.emit('returnListQuestions', await questionService.list());
+        socket.emit('returnListQuestions', await questionService.listAll());
     });
 
     socket.on('getRandomQuestion', async () => {

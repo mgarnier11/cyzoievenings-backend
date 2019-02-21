@@ -193,6 +193,21 @@ function listQuestionsByParams(params) {
 function listQuestions() {
     return new Promise(async (resolve, reject) => {
         try {
+            let questions = await questionDao.listQuestions();
+
+            questions = questions.filter(q => { return q.hidden == false });
+
+            resolve(beforeReturnLstQuestions(questions));
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+
+function listAllQuestions() {
+    return new Promise(async (resolve, reject) => {
+        try {
             let allQuestions = await questionDao.listQuestions();
 
             resolve(beforeReturnLstQuestions(allQuestions));
@@ -356,6 +371,8 @@ var questionService = {
     //upsertQuestion: upsertQuestion,
 
     list: listQuestions,
+
+    listAll: listAllQuestions,
 
     listT: async (typeId) => {
         return await listQuestionsByParams([

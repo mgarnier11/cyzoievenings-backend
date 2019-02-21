@@ -28,7 +28,7 @@ var questionDao = {
 
     listQuestions: () => {
         return new Promise((resolve, reject) => {
-            db.collection('questions').find({ hidden: false }).toArray((err, result) => {
+            db.collection('questions').find({}).toArray((err, result) => {
                 if (err) reject(err);
                 else resolve(result.reverse());
             });
