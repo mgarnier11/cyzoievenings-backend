@@ -368,7 +368,7 @@ var questionService = {
         ]));
     },
 
-    //upsertQuestion: upsertQuestion,
+    upsertQuestion: upsertQuestion,
 
     list: listQuestions,
 
@@ -414,7 +414,7 @@ var questionService = {
         ]);
     },
 
-    //deleteQuestion: deleteQuestion,
+    deleteQuestion: deleteQuestion,
 
     //deleteQuestionById: deleteQuestionById,
 
