@@ -122,7 +122,7 @@ function listTypesW() {
             let nTypesId = [];
 
             allQuestions.forEach(question => {
-                nTypesId.push(question.typeId);
+                if (!question.hidden) nTypesId.push(question.typeId);
             });
 
             let nTypes = [...types];
