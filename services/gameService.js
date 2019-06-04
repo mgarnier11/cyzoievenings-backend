@@ -131,7 +131,7 @@ function list() {
         try {
             let games = await gameDao.listGames();
 
-            resolve(game);
+            resolve(games);
         } catch (error) {
             reject(error);
         }
