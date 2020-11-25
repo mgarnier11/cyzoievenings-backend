@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "test": "mocha ./tests/app.tests.js"
   },
   "dependencies": {
     "cookie-parser": "~1.4.3",
@@ -19,6 +20,7 @@
     "weighted-random": "^0.1.0"
   },
   "devDependencies": {
+    "clever-tools": "^2.7.2",
     "mocha": "^8.2.1",
     "should": "^13.2.3"
   }
