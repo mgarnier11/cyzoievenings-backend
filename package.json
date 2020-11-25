@@ -17,5 +17,9 @@
     "socket.io": "^2.2.0",
     "uuid": "^3.3.2",
     "weighted-random": "^0.1.0"
+  },
+  "devDependencies": {
+    "mocha": "^8.2.1",
+    "should": "^13.2.3"
   }
 }
