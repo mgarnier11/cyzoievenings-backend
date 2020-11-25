@@ -33,6 +33,10 @@ mongoClient.connect(myDbUrl, { useNewUrlParser: true }, async (err, db) => {
   app.use("/questions", apiQuestionController);
   app.use("/types", apiTypeController);
 
+  app.get("/", (req, res) => {
+    res.send("hello world, this app should be using some ws");
+  });
+
   // catch 404 and forward to error handler
   app.use(function (req, res, next) {
     next(createError(404));
@@ -47,10 +51,6 @@ mongoClient.connect(myDbUrl, { useNewUrlParser: true }, async (err, db) => {
     // render the error page
     res.status(err.status || 500);
     res.send("error");
-  });
-
-  app.get("/", (req, res) => {
-    res.send("hello world, this app should be using some ws");
   });
 
   var server = http.createServer(app);
