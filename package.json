@@ -15,7 +15,7 @@
     "http-errors": "~1.6.2",
     "mongodb": "^3.1.13",
     "morgan": "~1.9.0",
-    "socket.io": "^2.2.0",
+    "socket.io": "^2.5.0",
     "uuid": "^3.3.2",
     "weighted-random": "^0.1.0"
   },
